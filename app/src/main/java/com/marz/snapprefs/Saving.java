@@ -3,6 +3,7 @@ package com.marz.snapprefs;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.content.res.XModuleResources;
 import android.graphics.Bitmap;
@@ -10,6 +11,8 @@ import android.graphics.Canvas;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -409,73 +412,92 @@ public class Saving {
                     mini_profile_snapcode.setOnLongClickListener(new View.OnLongClickListener() {
                         @Override
                         public boolean onLongClick(View v) {
-                            // ProfileImageUtils$ProfileImageSize inner class
-                            Class<?> profileImageSizeClass = findClass(Obfuscator.save.PROFILE_IMAGE_UTILS_PROFILE_IMAGE_SIZE_INNER_CLASS, lpparam.classLoader);
-                            // F
-                            Object friendObject = getObjectField(param.thisObject, Obfuscator.save.FRIEND_MINI_PROFILE_POPUP_FRIEND_FIELD);
-                            // ^.g
-                            String username = (String) callMethod(friendObject, Obfuscator.save.GET_FRIEND_USERNAME);
-                            // ProfileImageSize.MEDIUM
-                            Object MEDIUM = getStaticObjectField(findClass(Obfuscator.save.PROFILE_IMAGE_UTILS_PROFILE_IMAGE_SIZE_INNER_CLASS, lpparam.classLoader), "MEDIUM");
-                            // this.i
-                            Object i = getObjectField(param.thisObject, Obfuscator.save.FRIEND_MINI_PROFILE_POPUP_FRIENDS_PROFILE_IMAGES_CACHE);
-                            //^.a(F.g(), ProfileImageSize.MEDIUM)
-                            List<Bitmap> profileImages = (List<Bitmap>) callMethod(i, Obfuscator.save.PROFILE_IMAGES_CACHE_GET_PROFILE_IMAGES, new Class[]{String.class, profileImageSizeClass}, username, MEDIUM);
-                            String filePath = SavingUtils.generateFilePath("ProfileImages", username);
-                            if (Preferences.getBool(Prefs.DEBUGGING)) {
-                                Logger.printTitle("Profile Image Saving Debug Information", LogType.SAVING);
-                                Logger.printMessage("Profile Image Size Inner Class: " + profileImageSizeClass, LogType.SAVING);
-                                Logger.printMessage("friendObject: " + friendObject, LogType.SAVING);
-                                Logger.printMessage("Medium: " + MEDIUM, LogType.SAVING);
-                                Logger.printMessage("'i' Object: " + i, LogType.SAVING);
-                                Logger.printMessage("profileImages List Object: " + profileImages, LogType.SAVING);
-                                Logger.printFilledRow(LogType.SAVING);
+                            LayoutInflater li = LayoutInflater.from(snapContext);
+                            View testView = li.inflate(R.layout.profile_image_uploader_layout, null);
 
-                                Logger.printTitle("Profile Image Saving Save Path Debug Information", LogType.SAVING);
-                                Logger.printMessage("Sort by Category Pref: " + Preferences.getBool(Prefs.SORT_BY_CATEGORY), LogType.SAVING);
-                                Logger.printMessage("Sort by Username Pref: " + Preferences.getBool(Prefs.SORT_BY_USERNAME), LogType.SAVING);
-                                Logger.printMessage("File Path: " + filePath, LogType.SAVING);
-                                Logger.printFilledRow(LogType.SAVING);
-                            }
-                            final File profileImagesFolder = new File(filePath);
-                            if (!profileImagesFolder.mkdirs() && !profileImagesFolder.exists()) {
-                                Logger.log("Error creating ProfileImages and/or Username folder");
-                                return false;
-                            }
-
-                            if (profileImages == null) {
-                                SavingUtils.vibrate(snapContext, false);
-                                NotificationUtils.showStatefulMessage("Error Saving Profile Images For " + username + "\nIf The Profile Image Is Not Blank Please Enable Debug Mode And Rep", ToastType.BAD, lpparam.classLoader);
-                                return false;
-                            }
-                            int succCounter = 0;
-                            int sizeOfProfileImages = profileImages.size();
-                            for (int iterator = 0; iterator < sizeOfProfileImages; iterator++) {
-                                Bitmap bmp = profileImages.get(iterator);
-                                File f = null;
-                                try {
-                                    f = new File(profileImagesFolder, username + "-" + iterator + "-" + CommonUtils.sha256(bmp) + ".jpg");
-                                } catch (NoSuchAlgorithmException e) {
-                                    e.printStackTrace();
+                            AlertDialog.Builder blder = new AlertDialog.Builder(snapContext);
+                            blder.setView(testView);
+                            blder.setTitle("Testing Dialog!").setCancelable(false).setPositiveButton("Positive!", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    NotificationUtils.showStatefulMessage("Yaaaaayyyy!!!", ToastType.GOOD, lpparam.classLoader);
                                 }
-                                if (f == null) {
-                                    NotificationUtils.showStatefulMessage("File f is null!", ToastType.BAD, lpparam.classLoader);
-                                    Logger.logStackTrace();
-                                    return false;
+                            }).setNegativeButton("Negative!!", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    NotificationUtils.showStatefulMessage("Noooooooo!", ToastType.GOOD, lpparam.classLoader);
                                 }
-                                if (f.exists()) {
-                                    NotificationUtils.showStatefulMessage("Profile Images already Exist.", ToastType.BAD, lpparam.classLoader);
-                                    return true;
-                                }
-
-                                if (SavingUtils.saveJPG(f, profileImages.get(iterator), snapContext, false)) {
-                                    succCounter++;
-                                }
-                            }
-                            Boolean succ = (succCounter == sizeOfProfileImages);
-                            NotificationUtils.showStatefulMessage("Saved " + succCounter + "/" + sizeOfProfileImages + " profile images.", succ ? ToastType.GOOD : ToastType.BAD, lpparam.classLoader);
-                            SavingUtils.vibrate(snapContext, succ);
+                            });
+                            AlertDialog diag = blder.create();
+                            diag.show();
                             return true;
+//                            // ProfileImageUtils$ProfileImageSize inner class
+//                            Class<?> profileImageSizeClass = findClass(Obfuscator.save.PROFILE_IMAGE_UTILS_PROFILE_IMAGE_SIZE_INNER_CLASS, lpparam.classLoader);
+//                            // F
+//                            Object friendObject = getObjectField(param.thisObject, Obfuscator.save.FRIEND_MINI_PROFILE_POPUP_FRIEND_FIELD);
+//                            // ^.g
+//                            String username = (String) callMethod(friendObject, Obfuscator.save.GET_FRIEND_USERNAME);
+//                            // ProfileImageSize.MEDIUM
+//                            Object MEDIUM = getStaticObjectField(findClass(Obfuscator.save.PROFILE_IMAGE_UTILS_PROFILE_IMAGE_SIZE_INNER_CLASS, lpparam.classLoader), "MEDIUM");
+//                            // this.i
+//                            Object i = getObjectField(param.thisObject, Obfuscator.save.FRIEND_MINI_PROFILE_POPUP_FRIENDS_PROFILE_IMAGES_CACHE);
+//                            //^.a(F.g(), ProfileImageSize.MEDIUM)
+//                            List<Bitmap> profileImages = (List<Bitmap>) callMethod(i, Obfuscator.save.PROFILE_IMAGES_CACHE_GET_PROFILE_IMAGES, new Class[]{String.class, profileImageSizeClass}, username, MEDIUM);
+//                            String filePath = SavingUtils.generateFilePath("ProfileImages", username);
+//                            if (Preferences.getBool(Prefs.DEBUGGING)) {
+//                                Logger.printTitle("Profile Image Saving Debug Information", LogType.SAVING);
+//                                Logger.printMessage("Profile Image Size Inner Class: " + profileImageSizeClass, LogType.SAVING);
+//                                Logger.printMessage("friendObject: " + friendObject, LogType.SAVING);
+//                                Logger.printMessage("Medium: " + MEDIUM, LogType.SAVING);
+//                                Logger.printMessage("'i' Object: " + i, LogType.SAVING);
+//                                Logger.printMessage("profileImages List Object: " + profileImages, LogType.SAVING);
+//                                Logger.printFilledRow(LogType.SAVING);
+//
+//                                Logger.printTitle("Profile Image Saving Save Path Debug Information", LogType.SAVING);
+//                                Logger.printMessage("Sort by Category Pref: " + Preferences.getBool(Prefs.SORT_BY_CATEGORY), LogType.SAVING);
+//                                Logger.printMessage("Sort by Username Pref: " + Preferences.getBool(Prefs.SORT_BY_USERNAME), LogType.SAVING);
+//                                Logger.printMessage("File Path: " + filePath, LogType.SAVING);
+//                                Logger.printFilledRow(LogType.SAVING);
+//                            }
+//                            final File profileImagesFolder = new File(filePath);
+//                            if (!profileImagesFolder.mkdirs() && !profileImagesFolder.exists()) {
+//                                Logger.log("Error creating ProfileImages and/or Username folder");
+//                                return false;
+//                            }
+//
+//                            if (profileImages == null) {
+//                                SavingUtils.vibrate(snapContext, false);
+//                                NotificationUtils.showStatefulMessage("Error Saving Profile Images For " + username + "\nIf The Profile Image Is Not Blank Please Enable Debug Mode And Rep", ToastType.BAD, lpparam.classLoader);
+//                                return false;
+//                            }
+//                            int succCounter = 0;
+//                            int sizeOfProfileImages = profileImages.size();
+//                            for (int iterator = 0; iterator < sizeOfProfileImages; iterator++) {
+//                                Bitmap bmp = profileImages.get(iterator);
+//                                File f = null;
+//                                try {
+//                                    f = new File(profileImagesFolder, username + "-" + iterator + "-" + CommonUtils.sha256(bmp) + ".jpg");
+//                                } catch (NoSuchAlgorithmException e) {
+//                                    e.printStackTrace();
+//                                }
+//                                if (f == null) {
+//                                    NotificationUtils.showStatefulMessage("File f is null!", ToastType.BAD, lpparam.classLoader);
+//                                    Logger.logStackTrace();
+//                                    return false;
+//                                }
+//                                if (f.exists()) {
+//                                    NotificationUtils.showStatefulMessage("Profile Images already Exist.", ToastType.BAD, lpparam.classLoader);
+//                                    return true;
+//                                }
+//
+//                                if (SavingUtils.saveJPG(f, profileImages.get(iterator), snapContext, false)) {
+//                                    succCounter++;
+//                                }
+//                            }
+//                            Boolean succ = (succCounter == sizeOfProfileImages);
+//                            NotificationUtils.showStatefulMessage("Saved " + succCounter + "/" + sizeOfProfileImages + " profile images.", succ ? ToastType.GOOD : ToastType.BAD, lpparam.classLoader);
+//                            SavingUtils.vibrate(snapContext, succ);
+//                            return true;
                         }
                     });
                 }

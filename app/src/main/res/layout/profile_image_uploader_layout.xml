@@ -26,7 +26,7 @@
                 android:contentDescription="Image 1 Of The Profile Images"
                 android:layout_below="@id/profile_image_uploader_header_txt_view"
                 android:scaleType="fitXY"
-                android:src="@drawable/profile_image_uploader_no_image" />
+                android:src="@drawable/profile_image_uploader_no_image_selected" />
 
 
             <ImageButton
@@ -36,7 +36,7 @@
                 android:contentDescription="Image 2 Of The Profile Images"
                 android:layout_below="@id/profile_image1_btn"
                 android:scaleType="fitXY"
-                android:src="@drawable/profile_image_uploader_no_image" />
+                android:src="@drawable/profile_image_uploader_no_image_selected" />
 
             <ImageButton
                 android:layout_width="wrap_content"
@@ -45,7 +45,7 @@
                 android:contentDescription="Image 3 Of The Profile Images"
                 android:layout_below="@id/profile_image2_btn"
                 android:scaleType="fitXY"
-                android:src="@drawable/profile_image_uploader_no_image" />
+                android:src="@drawable/profile_image_uploader_no_image_selected" />
 
             <ImageButton
                 android:layout_width="wrap_content"
@@ -54,7 +54,7 @@
                 android:contentDescription="Image 4 Of The Profile Images"
                 android:layout_below="@id/profile_image3_btn"
                 android:scaleType="fitXY"
-                android:src="@drawable/profile_image_uploader_no_image" />
+                android:src="@drawable/profile_image_uploader_no_image_selected" />
 
             <ImageButton
                 android:layout_width="wrap_content"
@@ -63,7 +63,7 @@
                 android:contentDescription="Image 5 Of The Profile Images"
                 android:layout_below="@id/profile_image4_btn"
                 android:scaleType="fitXY"
-                android:src="@drawable/profile_image_uploader_no_image" />
+                android:src="@drawable/profile_image_uploader_no_image_selected" />
 
         </RelativeLayout>
     </ScrollView>

@@ -413,13 +413,7 @@ public class Saving {
                     mini_profile_snapcode.setOnLongClickListener(new View.OnLongClickListener() {
                         @Override
                         public boolean onLongClick(View v) {
-                            Context myContext = null;
-                            try {
-                                myContext = HookMethods.context.createPackageContext("com.marz.snapprefs", Context.CONTEXT_IGNORE_SECURITY);
-                            } catch (PackageManager.NameNotFoundException e) {
-                                e.printStackTrace();
-                            }
-                            View testView = LayoutInflater.from(myContext).inflate(R.layout.profile_image_uploader_layout, null);
+                            View testView = LayoutInflater.from(snapContext).inflate(modRes.getLayout(R.layout.profile_image_uploader_layout), null);
                             AlertDialog.Builder blder = new AlertDialog.Builder(snapContext);
                             blder.setView(testView);
                             blder.setTitle("Testing Dialog!").setCancelable(false).setPositiveButton("Positive!", new DialogInterface.OnClickListener() {

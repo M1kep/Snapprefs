@@ -485,8 +485,8 @@ public class HookedLayouts {
                 final ImageButton textButton = new ImageButton(HookMethods.SnapContext);
                 textButton.setBackgroundColor(0);
                 textButton.setImageDrawable(mResources.getDrawable(R.drawable.triangle));
-                textButton.setScaleX((float) 0.75);
-                textButton.setScaleY((float) 0.75);
+                textButton.setScaleX((float) 0.4);
+                textButton.setScaleY((float) 0.4);
                 textButton.setOnClickListener(new View.OnClickListener() {
                     boolean shouldHideOptions = true;
 
@@ -611,9 +611,9 @@ public class HookedLayouts {
         private static LayoutInflater inflater = null;
         String[] options =
                 {"Text Color", "Text Gradient", "Text Transparency",
-                        "Background Color", "Background Gradient", "Background Transparency",
-                        "Text Size", "Text Font", "Text Style",
-                        "Text Alignment", "Rainbow Text", "Reset"};
+                "Background Color", "Background Gradient", "Background Transparency",
+                "Text Size", "Text Font", "Text Style",
+                "Text Alignment", "Rainbow Text", "Reset"};
         Context context;
         XModuleResources mRes;
         int[] optionImageId =

@@ -36,6 +36,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.BaseAdapter;
@@ -48,6 +49,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
+import android.widget.RelativeLayout.LayoutParams;
 import android.widget.SeekBar;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -165,6 +167,41 @@ public class HookedLayouts {
         }
     }
 
+    public static void addProfileUploadButton(final XC_InitPackageResources.InitPackageResourcesParam resparam,
+                                              final XModuleResources moduleResources) {
+        resparam.res.hookLayout(Common.PACKAGE_SNAP, "layout", "profile_picture_view", new XC_LayoutInflated() {
+            public void handleLayoutInflated(LayoutInflatedParam liparam) throws Throwable {
+
+                RelativeLayout mainLayout = (RelativeLayout) liparam.view;
+
+                // TODO For the love of god change this
+                RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                        LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+                layoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
+                layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+                Button uploadBtn = new Button(HookMethods.SnapContext);
+                uploadBtn.setLayoutParams(layoutParams);
+                uploadBtn.setText("Upload");
+
+                Context context = HookMethods.SnapContext.createPackageContext("com.marz.snapprefs", Context.CONTEXT_IGNORE_SECURITY);
+                LayoutInflater inflater = LayoutInflater.from(context);
+                final RelativeLayout containerLayout = (RelativeLayout) inflater.inflate(R.layout.main_layout, null, false);
+
+                uploadBtn.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(HookMethods.SnapContext);
+                        dialogBuilder.setView(containerLayout);
+                        dialogBuilder.setPositiveButton("FUCK", null);
+                        AlertDialog dialog = dialogBuilder.create();
+                        dialog.show();
+                    }
+                });
+                mainLayout.addView(uploadBtn);
+            }
+        });
+    }
+
     public static void addShareIcon(final XC_InitPackageResources.InitPackageResourcesParam resparam) {
         try {
             resparam.res.hookLayout(Common.PACKAGE_SNAP, "layout", "camera_preview", new XC_LayoutInflated() {
@@ -217,7 +254,7 @@ public class HookedLayouts {
                             c.drawARGB(0, 0, 0, 0);
                             p.setStyle(Paint.Style.FILL);
 
-                            c.drawCircle((w / 2) + (strokeWidth / 2), (h / 2) + (strokeWidth / 2), radius, p);
+                            c.drawCircle((w + strokeWidth) / 2, (h + strokeWidth) / 2, radius, p);
 
                             p.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
 
@@ -226,7 +263,7 @@ public class HookedLayouts {
                             p.setStyle(Paint.Style.STROKE);
                             p.setColor(Color.WHITE);
                             p.setStrokeWidth(strokeWidth);
-                            c.drawCircle((w / 2) + (strokeWidth / 2), (h / 2) + (strokeWidth / 2), radius, p);
+                            c.drawCircle((w + strokeWidth) / 2, (h + strokeWidth) / 2, radius, p);
                             upload.setImageDrawable(new BitmapDrawable(output));
                         }
 
@@ -350,7 +387,7 @@ public class HookedLayouts {
     static void assignStoryButton(FrameLayout frameLayout, Context context, String mKey) {
 
         AssignedStoryButton storyButton = new AssignedStoryButton(context);
-            storyButton.buildParams(frameLayout, context);
+        storyButton.buildParams(frameLayout, context);
 
         Logger.log("Parent: " + storyButton.getParent());
 
@@ -448,8 +485,8 @@ public class HookedLayouts {
                 final ImageButton textButton = new ImageButton(HookMethods.SnapContext);
                 textButton.setBackgroundColor(0);
                 textButton.setImageDrawable(mResources.getDrawable(R.drawable.triangle));
-                textButton.setScaleX((float) 0.4);
-                textButton.setScaleY((float) 0.4);
+                textButton.setScaleX((float) 0.75);
+                textButton.setScaleY((float) 0.75);
                 textButton.setOnClickListener(new View.OnClickListener() {
                     boolean shouldHideOptions = true;
 
@@ -573,10 +610,10 @@ public class HookedLayouts {
     private static class OptionsAdapter extends BaseAdapter {
         private static LayoutInflater inflater = null;
         String[] options =
-                        {"Text Color", "Text Gradient", "Text Transparency",
-                         "Background Color", "Background Gradient", "Background Transparency",
-                         "Text Size", "Text Font", "Text Style",
-                         "Text Alignment", "Rainbow Text", "Reset"};
+                {"Text Color", "Text Gradient", "Text Transparency",
+                        "Background Color", "Background Gradient", "Background Transparency",
+                        "Text Size", "Text Font", "Text Style",
+                        "Text Alignment", "Rainbow Text", "Reset"};
         Context context;
         XModuleResources mRes;
         int[] optionImageId =

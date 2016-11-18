@@ -46,6 +46,7 @@ import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_InitPackageResources.InitPackageResourcesParam;
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
 
+import static com.marz.snapprefs.HookedLayouts.addProfileUploadButton;
 import static de.robv.android.xposed.XposedBridge.hookAllConstructors;
 import static de.robv.android.xposed.XposedHelpers.callMethod;
 import static de.robv.android.xposed.XposedHelpers.callStaticMethod;
@@ -198,6 +199,11 @@ public class HookMethods
             // TODO Set up removal of button when mode is changed
             // Currently requires snapchat to restart to remove the button
             saveImg = BitmapFactory.decodeResource(mResources, R.drawable.save_button);
+
+            try {
+                addProfileUploadButton(resparam, modRes);
+            } catch (Resources.NotFoundException ignore) {
+            }
 
             try {
                 HookedLayouts.addSaveButtonsAndGestures(resparam, mResources, localContext);

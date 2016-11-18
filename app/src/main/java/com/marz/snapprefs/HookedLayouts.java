@@ -254,8 +254,7 @@ public class HookedLayouts {
                             c.drawARGB(0, 0, 0, 0);
                             p.setStyle(Paint.Style.FILL);
 
-                            c.drawCircle((w + strokeWidth) / 2, (h + strokeWidth) / 2, radius, p);
-
+                            c.drawCircle((w / 2) + (strokeWidth / 2), (h / 2) + (strokeWidth / 2), radius, p);
                             p.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
 
                             c.drawBitmap(resized, (strokeWidth / 2), (strokeWidth / 2), p);
@@ -263,7 +262,7 @@ public class HookedLayouts {
                             p.setStyle(Paint.Style.STROKE);
                             p.setColor(Color.WHITE);
                             p.setStrokeWidth(strokeWidth);
-                            c.drawCircle((w + strokeWidth) / 2, (h + strokeWidth) / 2, radius, p);
+                            c.drawCircle((w / 2) + (strokeWidth / 2), (h / 2) + (strokeWidth / 2), radius, p);
                             upload.setImageDrawable(new BitmapDrawable(output));
                         }
 
@@ -610,10 +609,10 @@ public class HookedLayouts {
     private static class OptionsAdapter extends BaseAdapter {
         private static LayoutInflater inflater = null;
         String[] options =
-                {"Text Color", "Text Gradient", "Text Transparency",
-                "Background Color", "Background Gradient", "Background Transparency",
-                "Text Size", "Text Font", "Text Style",
-                "Text Alignment", "Rainbow Text", "Reset"};
+                    {"Text Color", "Text Gradient", "Text Transparency",
+                     "Background Color", "Background Gradient", "Background Transparency",
+                     "Text Size", "Text Font", "Text Style",
+                     "Text Alignment", "Rainbow Text", "Reset"};
         Context context;
         XModuleResources mRes;
         int[] optionImageId =

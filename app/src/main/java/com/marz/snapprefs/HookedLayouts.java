@@ -195,7 +195,7 @@ public class HookedLayouts {
                             ((ViewGroup)containerLayout.getParent()).removeView(containerLayout);
                         }
                         dialogBuilder.setView(containerLayout);
-                        dialogBuilder.setPositiveButton("FUCK", null);
+                        dialogBuilder.setPositiveButton("Fuck Button", null);
                         AlertDialog dialog = dialogBuilder.create();
                         dialog.show();
                     }

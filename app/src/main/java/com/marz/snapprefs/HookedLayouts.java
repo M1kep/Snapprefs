@@ -191,6 +191,9 @@ public class HookedLayouts {
                     @Override
                     public void onClick(View view) {
                         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(HookMethods.SnapContext);
+                        if(containerLayout.getParent()!=null) {
+                            ((ViewGroup)containerLayout.getParent()).removeView(containerLayout);
+                        }
                         dialogBuilder.setView(containerLayout);
                         dialogBuilder.setPositiveButton("FUCK", null);
                         AlertDialog dialog = dialogBuilder.create();

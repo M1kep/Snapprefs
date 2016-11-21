@@ -172,27 +172,32 @@ public class HookedLayouts {
         resparam.res.hookLayout(Common.PACKAGE_SNAP, "layout", "profile_picture_view", new XC_LayoutInflated() {
             public void handleLayoutInflated(LayoutInflatedParam liparam) throws Throwable {
 
-                RelativeLayout mainLayout = (RelativeLayout) liparam.view;
+                final RelativeLayout mainLayout = (RelativeLayout) liparam.view;
 
                 // TODO For the love of god change this
                 RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
                         LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
                 layoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
                 layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-                Button uploadBtn = new Button(HookMethods.SnapContext);
+                final Button uploadBtn = new Button(HookMethods.SnapContext);
                 uploadBtn.setLayoutParams(layoutParams);
                 uploadBtn.setText("Upload");
 
                 Context context = HookMethods.SnapContext.createPackageContext("com.marz.snapprefs", Context.CONTEXT_IGNORE_SECURITY);
-                final LayoutInflater inflater = LayoutInflater.from(context);
+                LayoutInflater inflater = LayoutInflater.from(context);
+                final RelativeLayout containerLayout = (RelativeLayout) inflater.inflate(R.layout.main_layout, null, false);
 
                 uploadBtn.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        final RelativeLayout containerLayout = (RelativeLayout) inflater.inflate(R.layout.main_layout, null, false);
                         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(HookMethods.SnapContext);
                         dialogBuilder.setView(containerLayout);
-                        dialogBuilder.setPositiveButton("Fuck Button", null);
+                        dialogBuilder.setPositiveButton("Fuck Button", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                mainLayout.removeView(containerLayout);
+                            }
+                        });
                         AlertDialog dialog = dialogBuilder.create();
                         dialog.show();
                     }

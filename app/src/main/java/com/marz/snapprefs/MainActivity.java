@@ -251,7 +251,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
-
         if (isGooglePlayInstalled()) {
             gcm = GoogleCloudMessaging.getInstance(getApplicationContext());
 

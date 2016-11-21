@@ -198,72 +198,59 @@ public class MainActivity extends AppCompatActivity {
 
 
         Logger.log("SAVE LOCATION: " + Preferences.getSavePath());
-//        if (!Preferences.getBool(Preferences.Prefs.ACCEPTED_TOU)) {
-//            AlertDialog.Builder builder = new AlertDialog.Builder(context)
-//                    .setTitle("ToU and Privacy Policy")
-//                    .setView(R.layout.tos)
-//                    .setMessage("You haven't accepted our Terms of Use and Privacy. Please read it carefully and accept it, otherwise you will not be able to use our product.")
-//                    .setPositiveButton("Accept", new DialogInterface.OnClickListener() {
-//                        public void onClick(DialogInterface dialog, int which) {
-//                            Preferences.putBool("acceptedToU", true);
-//                            Toast.makeText(MainActivity.this, "You accepted the Terms of Use and Privacy Policy", Toast.LENGTH_SHORT).show();
-//                        }
-//                    })
-//                    .setIcon(android.R.drawable.ic_dialog_alert);
-//            builder.setCancelable(false);
-//            final AlertDialog dialog = builder.create();
-//            dialog.setCanceledOnTouchOutside(false);
-//            dialog.show();
-//
-//            Button privacyPolicy = (Button) dialog.findViewById(R.id.privacypolicy);
-//            Button tou = (Button) dialog.findViewById(R.id.tou);
-//            CheckBox accepted = (CheckBox) dialog.findViewById(R.id.readandaccepted);
-//
-//            privacyPolicy.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    try {
-//                        Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://snapprefs.com/wp/privacy-policy/"));
-//                        startActivity(myIntent);
-//                    } catch (ActivityNotFoundException e) {
-//                        Toast.makeText(MainActivity.this, "No application can handle this request." + " Please install a web browser", Toast.LENGTH_LONG).show();
-//                        e.printStackTrace();
-//                    }
-//                }
-//            });
-//            tou.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    try {
-//                        Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://snapprefs.com/wp/terms-of-use/"));
-//                        startActivity(myIntent);
-//                    } catch (ActivityNotFoundException e) {
-//                        Toast.makeText(MainActivity.this, "No application can handle this request." + " Please install a web browser", Toast.LENGTH_LONG).show();
-//                        e.printStackTrace();
-//                    }
-//                }
-//            });
-//            dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
-//            accepted.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//                @Override
-//                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-//                    dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(b);
-//                }
-//            });
-//        }
-        AlertDialog.Builder builder = new AlertDialog.Builder(context)
+        if (!Preferences.getBool(Preferences.Prefs.ACCEPTED_TOU)) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(context)
+                    .setTitle("ToU and Privacy Policy")
+                    .setView(R.layout.tos)
+                    .setMessage("You haven't accepted our Terms of Use and Privacy. Please read it carefully and accept it, otherwise you will not be able to use our product.")
+                    .setPositiveButton("Accept", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            Preferences.putBool("acceptedToU", true);
+                            Toast.makeText(MainActivity.this, "You accepted the Terms of Use and Privacy Policy", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert);
+            builder.setCancelable(false);
+            final AlertDialog dialog = builder.create();
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.show();
 
-                .setTitle("TESTING")
-                .setView(R.layout.profile_image_uploader_layout)
-                .setPositiveButton("Positive!", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(MainActivity.this, "YAAAAAYY!!!!!!!", Toast.LENGTH_SHORT).show();
+            Button privacyPolicy = (Button) dialog.findViewById(R.id.privacypolicy);
+            Button tou = (Button) dialog.findViewById(R.id.tou);
+            CheckBox accepted = (CheckBox) dialog.findViewById(R.id.readandaccepted);
+
+            privacyPolicy.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    try {
+                        Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://snapprefs.com/wp/privacy-policy/"));
+                        startActivity(myIntent);
+                    } catch (ActivityNotFoundException e) {
+                        Toast.makeText(MainActivity.this, "No application can handle this request." + " Please install a web browser", Toast.LENGTH_LONG).show();
+                        e.printStackTrace();
                     }
-                })
-                .setCancelable(false);
-        final AlertDialog dialog = builder.create();
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.show();
+                }
+            });
+            tou.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    try {
+                        Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://snapprefs.com/wp/terms-of-use/"));
+                        startActivity(myIntent);
+                    } catch (ActivityNotFoundException e) {
+                        Toast.makeText(MainActivity.this, "No application can handle this request." + " Please install a web browser", Toast.LENGTH_LONG).show();
+                        e.printStackTrace();
+                    }
+                }
+            });
+            dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
+            accepted.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(b);
+                }
+            });
+        }
 
         if (isGooglePlayInstalled()) {
             gcm = GoogleCloudMessaging.getInstance(getApplicationContext());

@@ -14,6 +14,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
+import android.support.v4.os.AsyncTaskCompat;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -360,8 +361,8 @@ public class Saving {
                     }
                 });
 
-                if(Preferences.getBool(Prefs.TIMER_UNLIMITED) || Preferences.getInt(Prefs.TIMER_MINIMUM) !=
-                        Preferences.TIMER_MINIMUM_DISABLED){
+                if (Preferences.getBool(Prefs.TIMER_UNLIMITED) || Preferences.getInt(Prefs.TIMER_MINIMUM) !=
+                        Preferences.TIMER_MINIMUM_DISABLED) {
                     XposedBridge.hookAllConstructors(findClass(Obfuscator.save.RECEIVEDSNAP_CLASS, lpparam.classLoader), new XC_MethodHook() {
                         @Override
                         protected void afterHookedMethod(MethodHookParam param) throws Throwable {
@@ -566,7 +567,7 @@ public class Saving {
             Activity activity = (Activity) callMethod(snapPreviewFragment, "getActivity");
             Object snapEditorView = getObjectField(snapPreviewFragment, Obfuscator.save.OBJECT_SNAP_EDITOR_VIEW);
 
-            if( snapEditorView == null ) {
+            if (snapEditorView == null) {
                 Logger.printFinalMessage("SnapEditorView not assigned - Halting process", LogType.SAVING);
                 return;
             }
@@ -730,9 +731,12 @@ public class Saving {
             try {
                 if (snapData.hasFlag(FlagState.COMPLETED) &&
                         !snapData.hasFlag(FlagState.SAVED)) {
-                    snapData.addFlag(FlagState.PROCESSING);
+
+                    if (!snapData.hasFlag(FlagState.PROCESSING))
+                        snapData.addFlag(FlagState.PROCESSING);
+
                     if (asyncSaveMode) {
-                        new AsyncSaveSnapData().execute(context, snapData);
+                        AsyncTaskCompat.executeParallel(new AsyncSaveSnapData(), context, snapData);
                     } else
                         handleSave(context, snapData);
                 } else {
@@ -804,19 +808,22 @@ public class Saving {
             Logger.printMessage("Hash Size: " + hashSnapData.size(), LogType.SAVING);
         }
 
-        long lngTimestamp = (Long) callMethod(receivedSnap, Obfuscator.save.SNAP_GETTIMESTAMP);
-        Date timestamp = new Date(lngTimestamp);
-        String strTimestamp = dateFormat.format(timestamp);
+        if (!snapData.hasFlag(FlagState.COMPLETED)) {
+            long lngTimestamp = (Long) callMethod(receivedSnap, Obfuscator.save.SNAP_GETTIMESTAMP);
+            Date timestamp = new Date(lngTimestamp);
+            String strTimestamp = dateFormat.format(timestamp);
 
-        Logger.printMessage("Timestamp: " + strTimestamp, LogType.SAVING);
+            Logger.printMessage("Timestamp: " + strTimestamp, LogType.SAVING);
 
-        snapData.setHeader(mId, mKey, strSender, strTimestamp, snapType);
-        Logger.printMessage("Header attached", LogType.SAVING);
+            snapData.setHeader(mId, mKey, strSender, strTimestamp, snapType);
+            Logger.printMessage("Header attached", LogType.SAVING);
+        } else
+            Logger.printMessage("Snap already completed", LogType.SAVING);
 
         if (shouldAutoSave(snapData)) {
             snapData.addFlag(FlagState.PROCESSING);
             if (asyncSaveMode && snapData.hasFlag(FlagState.COMPLETED))
-                new AsyncSaveSnapData().execute(context, snapData);
+                AsyncTaskCompat.executeParallel(new AsyncSaveSnapData(), context, snapData);
             else
                 handleSave(context, snapData);
         } else {
@@ -918,18 +925,22 @@ public class Saving {
             Logger.printMessage("Hash Size: " + hashSnapData.size(), LogType.SAVING);
         }
 
-        // Get the stream using the filepath provided
-        FileInputStream video = new FileInputStream(mAbsoluteFilePath);
+        if (!snapData.hasFlag(FlagState.COMPLETED)) {
 
-        // Assign the payload to the snapdata
-        snapData.setPayload(video);
-        Logger.printMessage("Successfully attached payload", LogType.SAVING);
+            // Get the stream using the filepath provided
+            FileInputStream video = new FileInputStream(mAbsoluteFilePath);
+
+            // Assign the payload to the snapdata
+            snapData.setPayload(video);
+            Logger.printMessage("Successfully attached payload", LogType.SAVING);
+        } else
+            Logger.printMessage("Snap already completed", LogType.SAVING);
 
         // If set to button saving, do not save
         if (shouldAutoSave(snapData)) {
             snapData.addFlag(FlagState.PROCESSING);
             if (asyncSaveMode && snapData.hasFlag(FlagState.COMPLETED))
-                new AsyncSaveSnapData().execute(context, snapData);
+                AsyncTaskCompat.executeParallel(new AsyncSaveSnapData(), context, snapData);
             else
                 handleSave(context, snapData);
         } else
@@ -986,25 +997,28 @@ public class Saving {
             Logger.printMessage("Hash Size: " + hashSnapData.size(), LogType.SAVING);
         }
 
-        if (originalBmp.isRecycled()) {
-            Logger.printFinalMessage("Bitmap is already recycled", LogType.SAVING);
-            snapData.addFlag(FlagState.FAILED);
-            createStatefulToast("Error saving image", ToastType.BAD);
-            return;
-        }
+        if (!snapData.hasFlag(FlagState.COMPLETED)) {
+            if (originalBmp.isRecycled()) {
+                Logger.printFinalMessage("Bitmap is already recycled", LogType.SAVING);
+                snapData.addFlag(FlagState.FAILED);
+                createStatefulToast("Error saving image", ToastType.BAD);
+                return;
+            }
 
-        Bitmap bmp = originalBmp.copy(Bitmap.Config.ARGB_8888, false);
+            Bitmap bmp = originalBmp.copy(Bitmap.Config.ARGB_8888, false);
 
-        Logger.printMessage("Pulled Bitmap", LogType.SAVING);
+            Logger.printMessage("Pulled Bitmap", LogType.SAVING);
 
-        // Assign the payload to the snapData
-        snapData.setPayload(bmp);
-        Logger.printMessage("Successfully attached payload", LogType.SAVING);
+            // Assign the payload to the snapData
+            snapData.setPayload(bmp);
+            Logger.printMessage("Successfully attached payload", LogType.SAVING);
+        } else
+            Logger.printMessage("Snap already completed", LogType.SAVING);
 
         if (shouldAutoSave(snapData)) {
             snapData.addFlag(FlagState.PROCESSING);
             if (asyncSaveMode && snapData.hasFlag(FlagState.COMPLETED))
-                new AsyncSaveSnapData().execute(context, snapData);
+                AsyncTaskCompat.executeParallel(new AsyncSaveSnapData(), context, snapData);
             else
                 handleSave(context, snapData);
         } else

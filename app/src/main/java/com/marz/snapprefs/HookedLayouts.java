@@ -184,20 +184,15 @@ public class HookedLayouts {
                 uploadBtn.setText("Upload");
 
                 Context context = HookMethods.SnapContext.createPackageContext("com.marz.snapprefs", Context.CONTEXT_IGNORE_SECURITY);
-                LayoutInflater inflater = LayoutInflater.from(context);
-                final RelativeLayout containerLayout = (RelativeLayout) inflater.inflate(R.layout.main_layout, null, false);
+                final LayoutInflater inflater = LayoutInflater.from(context);
+                //final RelativeLayout containerLayout = (RelativeLayout) inflater.inflate(R.layout.profile_image_uploader_layout, null, false);
 
                 uploadBtn.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(HookMethods.SnapContext);
-                        dialogBuilder.setView(containerLayout);
-                        dialogBuilder.setPositiveButton("Fuck Button", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                mainLayout.removeView(containerLayout);
-                            }
-                        });
+                        dialogBuilder.setView(inflater.inflate(R.layout.profile_image_uploader_layout, null, false));
+                        dialogBuilder.setPositiveButton("Fuck Button", null);
                         AlertDialog dialog = dialogBuilder.create();
                         dialog.show();
                     }

@@ -27,6 +27,7 @@ import android.graphics.drawable.shapes.RectShape;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.Html;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -35,6 +36,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.BaseAdapter;
@@ -47,6 +49,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
+import android.widget.RelativeLayout.LayoutParams;
 import android.widget.SeekBar;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -72,6 +75,7 @@ import de.robv.android.xposed.callbacks.XC_InitPackageResources;
 import de.robv.android.xposed.callbacks.XC_LayoutInflated;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
+import static com.marz.snapprefs.Dialogs.rColor;
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 import static de.robv.android.xposed.XposedHelpers.setAdditionalInstanceField;
 
@@ -163,6 +167,41 @@ public class HookedLayouts {
         }
     }
 
+    public static void addProfileUploadButton(final XC_InitPackageResources.InitPackageResourcesParam resparam,
+                                              final XModuleResources moduleResources) {
+        resparam.res.hookLayout(Common.PACKAGE_SNAP, "layout", "profile_picture_view", new XC_LayoutInflated() {
+            public void handleLayoutInflated(LayoutInflatedParam liparam) throws Throwable {
+
+                RelativeLayout mainLayout = (RelativeLayout) liparam.view;
+
+                // TODO For the love of god change this
+                RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                        LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+                layoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
+                layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+                Button uploadBtn = new Button(HookMethods.SnapContext);
+                uploadBtn.setLayoutParams(layoutParams);
+                uploadBtn.setText("Upload");
+
+                Context context = HookMethods.SnapContext.createPackageContext("com.marz.snapprefs", Context.CONTEXT_IGNORE_SECURITY);
+                LayoutInflater inflater = LayoutInflater.from(context);
+                final RelativeLayout containerLayout = (RelativeLayout) inflater.inflate(R.layout.main_layout, null, false);
+
+                uploadBtn.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(HookMethods.SnapContext);
+                        dialogBuilder.setView(containerLayout);
+                        dialogBuilder.setPositiveButton("FUCK", null);
+                        AlertDialog dialog = dialogBuilder.create();
+                        dialog.show();
+                    }
+                });
+                mainLayout.addView(uploadBtn);
+            }
+        });
+    }
+
     public static void addShareIcon(final XC_InitPackageResources.InitPackageResourcesParam resparam) {
         try {
             resparam.res.hookLayout(Common.PACKAGE_SNAP, "layout", "camera_preview", new XC_LayoutInflated() {
@@ -204,8 +243,9 @@ public class HookedLayouts {
                             int w = resized.getWidth();
                             int h = resized.getHeight();
 
+                            int strokeWidth = px(8);
                             int radius = Math.min(h / 2, w / 2);
-                            Bitmap output = Bitmap.createBitmap(w + 8, h + 8, Bitmap.Config.ARGB_8888);
+                            Bitmap output = Bitmap.createBitmap(w + strokeWidth, h + strokeWidth, Bitmap.Config.ARGB_8888);
 
                             Paint p = new Paint();
                             p.setAntiAlias(true);
@@ -214,16 +254,15 @@ public class HookedLayouts {
                             c.drawARGB(0, 0, 0, 0);
                             p.setStyle(Paint.Style.FILL);
 
-                            c.drawCircle((w / 2) + 4, (h / 2) + 4, radius, p);
-
+                            c.drawCircle((w / 2) + (strokeWidth / 2), (h / 2) + (strokeWidth / 2), radius, p);
                             p.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
 
-                            c.drawBitmap(resized, 4, 4, p);
+                            c.drawBitmap(resized, (strokeWidth / 2), (strokeWidth / 2), p);
                             p.setXfermode(null);
                             p.setStyle(Paint.Style.STROKE);
                             p.setColor(Color.WHITE);
-                            p.setStrokeWidth(px(8));
-                            c.drawCircle((w / 2) + 4, (h / 2) + 4, radius, p);
+                            p.setStrokeWidth(strokeWidth);
+                            c.drawCircle((w / 2) + (strokeWidth / 2), (h / 2) + (strokeWidth / 2), radius, p);
                             upload.setImageDrawable(new BitmapDrawable(output));
                         }
 
@@ -295,42 +334,51 @@ public class HookedLayouts {
                         liparam.res.getIdentifier("snap_container", "id", Common.PACKAGE_SNAP)
                 ).getParent();
 
-                saveSnapButton = new ImageButton(localContext);
-                saveSnapButton.setLayoutParams(layoutParams);
-                saveSnapButton.setBackgroundColor(0);
-                saveSnapButton.setAlpha(Preferences.getBool(Prefs.STEALTH_SAVING_BUTTON) ? 0f : 1f);
-                saveSnapButton.setImageBitmap(HookMethods.saveImg);
-                saveSnapButton.setVisibility(Preferences.getInt(Prefs.SAVEMODE_SNAP) == Preferences.SAVE_BUTTON
-                        ? View.VISIBLE : View.INVISIBLE);
+                int saveMode = Preferences.getInt(Prefs.SAVEMODE_SNAP);
 
-                frameLayout.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        if (gestureEvent == null) {
-                            if (Preferences.getInt(Prefs.SAVEMODE_SNAP) == Preferences.SAVE_S2S)
-                                gestureEvent = new SweepSaveGesture();
-                            else if (Preferences.getInt(Prefs.SAVEMODE_SNAP) == Preferences.SAVE_F2S)
-                                gestureEvent = new FlingSaveGesture();
-                            else {
-                                Logger.log("No gesture method provided");
-                                return false;
-                            }
+                if(saveMode == Preferences.SAVE_BUTTON) {
+                    saveSnapButton = new ImageButton(localContext);
+                    saveSnapButton.setLayoutParams(layoutParams);
+                    saveSnapButton.setBackgroundColor(0);
+                    saveSnapButton.setAlpha(Preferences.getBool(Prefs.STEALTH_SAVING_BUTTON) ? 0f : 1f);
+                    saveSnapButton.setImageBitmap(HookMethods.saveImg);
+                    saveSnapButton.setVisibility(View.VISIBLE);
+
+                    frameLayout.addView(saveSnapButton);
+                    saveSnapButton.bringToFront();
+
+                    saveSnapButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Logger.printTitle("Performing Button Save", LogType.SAVING);
+                            Saving.performButtonSave();
                         }
+                    });
+                } else if (saveMode == Preferences.SAVE_S2S ||
+                        saveMode == Preferences.SAVE_F2S) {
 
-                        return gestureEvent.onTouch(v, event, Saving.SnapType.SNAP) != GestureEvent.ReturnType.SAVED;
-                    }
-                });
+                    frameLayout.setOnTouchListener(new View.OnTouchListener() {
+                        @Override
+                        public boolean onTouch(View v, MotionEvent event) {
+                            if (gestureEvent == null) {
+                                if (Preferences.getInt(Prefs.SAVEMODE_SNAP) == Preferences.SAVE_S2S)
+                                    gestureEvent = new SweepSaveGesture();
+                                else if (Preferences.getInt(Prefs.SAVEMODE_SNAP) == Preferences.SAVE_F2S)
+                                    gestureEvent = new FlingSaveGesture();
+                                else {
+                                    Logger.log("No gesture method provided");
+                                    return false;
+                                }
+                            }
 
-                frameLayout.addView(saveSnapButton);
-                saveSnapButton.bringToFront();
-
-                saveSnapButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Logger.printTitle("Performing Button Save", LogType.SAVING);
-                        Saving.performButtonSave();
-                    }
-                });
+                            if (gestureEvent.onTouch(v, event, Saving.SnapType.SNAP) == GestureEvent.ReturnType.TAP) {
+                                Logger.log("Performed TAP?", LogType.SAVING);
+                                return false;
+                            } else
+                                return true;
+                        }
+                    });
+                }
             }
         });
     }
@@ -338,7 +386,7 @@ public class HookedLayouts {
     static void assignStoryButton(FrameLayout frameLayout, Context context, String mKey) {
 
         AssignedStoryButton storyButton = new AssignedStoryButton(context);
-            storyButton.buildParams(frameLayout, context);
+        storyButton.buildParams(frameLayout, context);
 
         Logger.log("Parent: " + storyButton.getParent());
 
@@ -436,8 +484,8 @@ public class HookedLayouts {
                 final ImageButton textButton = new ImageButton(HookMethods.SnapContext);
                 textButton.setBackgroundColor(0);
                 textButton.setImageDrawable(mResources.getDrawable(R.drawable.triangle));
-                textButton.setScaleX((float) 0.75);
-                textButton.setScaleY((float) 0.75);
+                textButton.setScaleX((float) 0.4);
+                textButton.setScaleY((float) 0.4);
                 textButton.setOnClickListener(new View.OnClickListener() {
                     boolean shouldHideOptions = true;
 
@@ -561,16 +609,17 @@ public class HookedLayouts {
     private static class OptionsAdapter extends BaseAdapter {
         private static LayoutInflater inflater = null;
         String[] options =
-                {"Text Color", "Text Size", "Text Transparency", "Text Gradient", "Text Alignment",
-                        "Text Style", "Text Font", "Background Color", "Background Transparency",
-                        "Background Gradient", "Reset"};
+                    {"Text Color", "Text Gradient", "Text Transparency",
+                     "Background Color", "Background Gradient", "Background Transparency",
+                     "Text Size", "Text Font", "Text Style",
+                     "Text Alignment", "Rainbow Text", "Reset"};
         Context context;
         XModuleResources mRes;
         int[] optionImageId =
-                {R.drawable.text_color, R.drawable.text_size, R.drawable.text_transparency,
-                        R.drawable.text_gradient, R.drawable.text_alignment, R.drawable.text_style,
-                        R.drawable.text_font, R.drawable.bg_color, R.drawable.bg_transparency,
-                        R.drawable.bg_gradient, R.drawable.reset};
+                {R.drawable.text_color, R.drawable.text_gradient, R.drawable.text_transparency,
+                        R.drawable.bg_color, R.drawable.bg_gradient, R.drawable.bg_transparency,
+                        R.drawable.text_size, R.drawable.text_font, R.drawable.text_style,
+                        R.drawable.text_alignment, R.drawable.rainbow, R.drawable.reset};
 
         public OptionsAdapter(Activity snapContext, XModuleResources mRes) {
             this.context = snapContext;
@@ -640,72 +689,7 @@ public class HookedLayouts {
                             colorPickerDialog.show();
                             return;
                         }
-                        case 1: { //textSize
-                            AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                            SeekBar seekBar = new SeekBar(context);
-                            seekBar.setMax(150);
-                            seekBar.setProgress((int) HookMethods.editText.getTextSize());
-                            seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                                public void onProgressChanged(SeekBar seekBar, int n,
-                                                              boolean bl) {
-                                    HookMethods.editText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, n);
-                                }
-
-                                @Override
-                                public void onStartTrackingTouch(SeekBar arg0) {
-                                }
-
-                                @Override
-                                public void onStopTrackingTouch(SeekBar arg0) {
-                                }
-
-                            });
-                            builder.setNeutralButton(Common.dialog_default, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    HookMethods.editText.setTextSize(TypedValue.COMPLEX_UNIT_PX, 32.5125f);
-                                }
-                            });
-                            builder.setPositiveButton(Common.dialog_done, null);
-                            builder.setView(seekBar);
-                            builder.show();
-                            return;
-                        }
-                        case 2: { //textAlpha
-                            AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                            SeekBar seekBar = new SeekBar(context);
-                            seekBar.setMax(100);
-                            seekBar.setProgress((int) HookMethods.editText.getAlpha() * 100);
-                            seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                                public void onProgressChanged(SeekBar seekBar2, int n,
-                                                              boolean bl) {
-                                    float alpha = (float) n / 100;
-                                    HookMethods.editText.setAlpha(alpha);
-                                }
-
-                                @Override
-                                public void onStartTrackingTouch(SeekBar arg0) {
-                                    // TODO Auto-generated method stub
-                                }
-
-                                @Override
-                                public void onStopTrackingTouch(SeekBar arg0) {
-                                    // TODO Auto-generated method stub
-                                }
-
-                            });
-                            builder.setNeutralButton(Common.dialog_default, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    HookMethods.editText.setAlpha(1);
-                                }
-                            });
-                            builder.setPositiveButton(Common.dialog_done, null);
-                            builder.setView(seekBar);
-                            builder.show();
-                            return;
-                        }
-                        case 3: { //textGradient
+                        case 1: { //textGradient
                             AlertDialog.Builder builder = new AlertDialog.Builder(context);
                             builder.setTitle("Text Gradient");
                             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -816,153 +800,41 @@ public class HookedLayouts {
                             builder.show();
                             return;
                         }
-                        case 4: { //textAlignment
+                        case 2: { //textAlpha
                             AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                            Button button_left = new Button(context);
-                            Button button_center = new Button(context);
-                            Button button_right = new Button(context);
-                            LinearLayout linearLayout = new LinearLayout(context);
-                            linearLayout.setOrientation(LinearLayout.VERTICAL);
-                            button_left.setText(Common.dialog_left);
-                            button_left.setOnClickListener(new View.OnClickListener() {
-                                public void onClick(View view) {
-                                    HookMethods.editText.setGravity(Gravity.START);
+                            SeekBar seekBar = new SeekBar(context);
+                            seekBar.setMax(100);
+                            seekBar.setProgress((int) HookMethods.editText.getAlpha() * 100);
+                            seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                                public void onProgressChanged(SeekBar seekBar2, int n,
+                                                              boolean bl) {
+                                    float alpha = (float) n / 100;
+                                    HookMethods.editText.setAlpha(alpha);
+                                }
+
+                                @Override
+                                public void onStartTrackingTouch(SeekBar arg0) {
+                                    // TODO Auto-generated method stub
+                                }
+
+                                @Override
+                                public void onStopTrackingTouch(SeekBar arg0) {
+                                    // TODO Auto-generated method stub
+                                }
+
+                            });
+                            builder.setNeutralButton(Common.dialog_default, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    HookMethods.editText.setAlpha(1);
                                 }
                             });
-                            button_center.setText(Common.dialog_center);
-                            button_center.setOnClickListener(new View.OnClickListener() {
-                                public void onClick(View view) {
-                                    HookMethods.editText.setGravity(Gravity.CENTER);
-                                }
-                            });
-                            button_right.setText(Common.dialog_right);
-                            button_right.setOnClickListener(new View.OnClickListener() {
-                                public void onClick(View view) {
-                                    HookMethods.editText.setGravity(Gravity.END);
-                                }
-                            });
-                            linearLayout.addView(button_left);
-                            linearLayout.addView(button_center);
-                            linearLayout.addView(button_right);
-                            builder.setView(linearLayout);
                             builder.setPositiveButton(Common.dialog_done, null);
+                            builder.setView(seekBar);
                             builder.show();
                             return;
                         }
-                        case 5: { //textStyle
-                            //TODO: checkboxes
-                            AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                            Button button_bold = new Button(context);
-                            Button button_italic = new Button(context);
-                            Button button_bolditalic = new Button(context);
-                            Button button_normal = new Button(context);
-                            LinearLayout linearLayout = new LinearLayout(context);
-                            linearLayout.setOrientation(LinearLayout.VERTICAL);
-                            button_bold.setText(Common.dialog_bold);
-                            button_bold.setOnClickListener(new View.OnClickListener() {
-                                public void onClick(View view) {
-                                    HookMethods.editText.setTypeface(null, Typeface.BOLD);
-                                }
-                            });
-                            button_italic.setText(Common.dialog_italic);
-                            button_italic.setOnClickListener(new View.OnClickListener() {
-                                public void onClick(View view) {
-                                    HookMethods.editText.setTypeface(null, Typeface.ITALIC);
-                                }
-                            });
-                            button_bolditalic.setText(Common.dialog_bolditalic);
-                            button_bolditalic.setOnClickListener(new View.OnClickListener() {
-                                public void onClick(View view) {
-                                    HookMethods.editText.setTypeface(null, Typeface.BOLD_ITALIC);
-                                }
-                            });
-                            button_normal.setText(Common.dialog_normal);
-                            button_normal.setOnClickListener(new View.OnClickListener() {
-                                public void onClick(View view) {
-                                    HookMethods.editText.setTypeface(null, Typeface.NORMAL);
-                                }
-                            });
-                            linearLayout.addView(button_bold);
-                            linearLayout.addView(button_italic);
-                            linearLayout.addView(button_bolditalic);
-                            linearLayout.addView(button_normal);
-                            builder.setView(linearLayout);
-                            builder.setPositiveButton(Common.dialog_done, null);
-                            builder.show();
-                            return;
-                        }
-                        case 6: { //textFont
-                            File folder = new File(Preferences.getExternalPath() +
-                                    "/Snapprefs/Fonts");
-                            if (folder.exists()) {
-                                FilenameFilter filter = new FilenameFilter() {
-                                    @Override
-                                    public boolean accept(File dir, String filename) {
-                                        if (filename.lastIndexOf('.') > 0) {
-                                            int lastIndex = filename.lastIndexOf('.');
-                                            String extension = filename.substring(lastIndex);
-                                            if (extension.equalsIgnoreCase(".ttf") ||
-                                                    extension.equalsIgnoreCase(".otf")) {
-                                                return true;
-                                            }
-                                        }
-                                        return false;
-                                    }
-                                };
-                                File[] fonts = folder.listFiles(filter);
-                                if (fonts.length > 0) {
-                                    AlertDialog.Builder builder =
-                                            new AlertDialog.Builder(context);
-                                    builder.setTitle("Font list");
-                                    builder.setNeutralButton("Default", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            HookMethods.editText.setTypeface(HookMethods.defTypeface);
-                                        }
-                                    });
-                                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface,
-                                                            int i) {
-                                        }
-                                    });
-                                    LinearLayout rootLayout = new LinearLayout(context);
-                                    LinearLayout.LayoutParams rootParams =
-                                            new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-                                    LayoutInflater inflater =
-                                            (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                                    rootLayout.addView(inflater.inflate(HookMethods.modRes.getLayout(R.layout.font_list), null), rootParams);
-                                    LinearLayout listLayout =
-                                            (LinearLayout) rootLayout.findViewById(R.id.fontLayout);
-                                    for (final File font : fonts) {
-                                        String fontName =
-                                                font.getName().substring(0, font.getName().toLowerCase().lastIndexOf("."));
-                                        TextView item = new TextView(context);
-                                        item.setLayoutParams(new TableLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-                                        item.setPadding(0, 0, 0, 2);
-                                        item.setText(fontName);
-                                        item.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 22.0f);
-                                        item.setGravity(Gravity.CENTER_HORIZONTAL);
-                                        item.setTypeface(TypefaceUtil.get(font));
-                                        item.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View view) {
-                                                HookMethods.editText.setTypeface(TypefaceUtil.get(font));
-                                            }
-                                        });
-                                        listLayout.addView(item);
-                                    }
-                                    builder.setView(rootLayout);
-                                    builder.show();
-                                } else {
-                                    NotificationUtils.showMessage("Fonts folder is empty", Color.RED, NotificationUtils.LENGTH_SHORT, HookMethods.classLoader);
-                                }
-                            } else {
-                                NotificationUtils.showMessage("Fonts folder is not available", Color.RED, NotificationUtils.LENGTH_SHORT, HookMethods.classLoader);
-                            }
-                            return;
-                        }
-                        case 7: { //bgColor
+                        case 3: { //bgColor
                             ColorPickerDialog colorPickerDialog =
                                     new ColorPickerDialog(context, HookMethods.editText.getSolidColor(), new ColorPickerDialog.OnColorSelectedListener() {
 
@@ -985,50 +857,7 @@ public class HookedLayouts {
                             colorPickerDialog.show();
                             return;
                         }
-                        case 8: { //bgAlpha
-                            AlertDialog.Builder builder =
-                                    new AlertDialog.Builder(HookMethods.SnapContext);
-                            SeekBar seekBar = new SeekBar(HookMethods.SnapContext);
-                            seekBar.setMax(255);
-                            int currentAPIVersion = Build.VERSION.SDK_INT;
-                            if (currentAPIVersion >= Build.VERSION_CODES.KITKAT) {
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                                    seekBar.setProgress(HookMethods.editText.getBackground().getAlpha());
-                                }
-                            } else {
-                                seekBar.setProgress(255);
-                            }
-                            seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                                public void onProgressChanged(SeekBar seekBar3, int n,
-                                                              boolean bl) {
-                                    HookMethods.editText.getBackground().setAlpha(n);
-                                }
-
-                                @Override
-                                public void onStartTrackingTouch(SeekBar arg0) {
-                                    // TODO Auto-generated method stub
-
-                                }
-
-                                @Override
-                                public void onStopTrackingTouch(SeekBar arg0) {
-                                    // TODO Auto-generated method stub
-
-                                }
-
-                            });
-                            builder.setNeutralButton(Common.dialog_default, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    HookMethods.editText.getBackground().setAlpha(153);
-                                }
-                            });
-                            builder.setPositiveButton(Common.dialog_done, null);
-                            builder.setView(seekBar);
-                            builder.show();
-                            return;
-                        }
-                        case 9: { //bgGradient
+                        case 4: { //bgGradient
                             AlertDialog.Builder builder = new AlertDialog.Builder(context);
                             builder.setTitle("Background Gradient");
                             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -1149,8 +978,248 @@ public class HookedLayouts {
                             });
                             builder.show();
                             return;
+
                         }
-                        case 10: { //reset
+                        case 5: { //bgAlpha
+                            AlertDialog.Builder builder =
+                                    new AlertDialog.Builder(HookMethods.SnapContext);
+                            SeekBar seekBar = new SeekBar(HookMethods.SnapContext);
+                            seekBar.setMax(255);
+                            int currentAPIVersion = Build.VERSION.SDK_INT;
+                            if (currentAPIVersion >= Build.VERSION_CODES.KITKAT) {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                                    seekBar.setProgress(HookMethods.editText.getBackground().getAlpha());
+                                }
+                            } else {
+                                seekBar.setProgress(255);
+                            }
+                            seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                                public void onProgressChanged(SeekBar seekBar3, int n,
+                                                              boolean bl) {
+                                    HookMethods.editText.getBackground().setAlpha(n);
+                                }
+
+                                @Override
+                                public void onStartTrackingTouch(SeekBar arg0) {
+                                    // TODO Auto-generated method stub
+
+                                }
+
+                                @Override
+                                public void onStopTrackingTouch(SeekBar arg0) {
+                                    // TODO Auto-generated method stub
+
+                                }
+
+                            });
+                            builder.setNeutralButton(Common.dialog_default, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    HookMethods.editText.getBackground().setAlpha(153);
+                                }
+                            });
+                            builder.setPositiveButton(Common.dialog_done, null);
+                            builder.setView(seekBar);
+                            builder.show();
+                            return;
+
+                        }
+                        case 6: { //textSize
+                            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                            SeekBar seekBar = new SeekBar(context);
+                            seekBar.setMax(150);
+                            seekBar.setProgress((int) HookMethods.editText.getTextSize());
+                            seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                                public void onProgressChanged(SeekBar seekBar, int n,
+                                                              boolean bl) {
+                                    HookMethods.editText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, n);
+                                }
+
+                                @Override
+                                public void onStartTrackingTouch(SeekBar arg0) {
+                                }
+
+                                @Override
+                                public void onStopTrackingTouch(SeekBar arg0) {
+                                }
+
+                            });
+                            builder.setNeutralButton(Common.dialog_default, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    HookMethods.editText.setTextSize(TypedValue.COMPLEX_UNIT_PX, 32.5125f);
+                                }
+                            });
+                            builder.setPositiveButton(Common.dialog_done, null);
+                            builder.setView(seekBar);
+                            builder.show();
+                            return;
+                        }
+                        case 7: { //textFont
+                            File folder = new File(Preferences.getExternalPath() +
+                                    "/Snapprefs/Fonts");
+                            if (folder.exists()) {
+                                FilenameFilter filter = new FilenameFilter() {
+                                    @Override
+                                    public boolean accept(File dir, String filename) {
+                                        if (filename.lastIndexOf('.') > 0) {
+                                            int lastIndex = filename.lastIndexOf('.');
+                                            String extension = filename.substring(lastIndex);
+                                            if (extension.equalsIgnoreCase(".ttf") ||
+                                                    extension.equalsIgnoreCase(".otf")) {
+                                                return true;
+                                            }
+                                        }
+                                        return false;
+                                    }
+                                };
+                                File[] fonts = folder.listFiles(filter);
+                                if (fonts.length > 0) {
+                                    AlertDialog.Builder builder =
+                                            new AlertDialog.Builder(context);
+                                    builder.setTitle("Font list");
+                                    builder.setNeutralButton("Default", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            HookMethods.editText.setTypeface(HookMethods.defTypeface);
+                                        }
+                                    });
+                                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface,
+                                                            int i) {
+                                        }
+                                    });
+                                    LinearLayout rootLayout = new LinearLayout(context);
+                                    LinearLayout.LayoutParams rootParams =
+                                            new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                                    LayoutInflater inflater =
+                                            (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                                    rootLayout.addView(inflater.inflate(HookMethods.modRes.getLayout(R.layout.font_list), null), rootParams);
+                                    LinearLayout listLayout =
+                                            (LinearLayout) rootLayout.findViewById(R.id.fontLayout);
+                                    for (final File font : fonts) {
+                                        String fontName =
+                                                font.getName().substring(0, font.getName().toLowerCase().lastIndexOf("."));
+                                        TextView item = new TextView(context);
+                                        item.setLayoutParams(new TableLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                                        item.setPadding(0, 0, 0, 2);
+                                        item.setText(fontName);
+                                        item.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 22.0f);
+                                        item.setGravity(Gravity.CENTER_HORIZONTAL);
+                                        item.setTypeface(TypefaceUtil.get(font));
+                                        item.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                                HookMethods.editText.setTypeface(TypefaceUtil.get(font));
+                                            }
+                                        });
+                                        listLayout.addView(item);
+                                    }
+                                    builder.setView(rootLayout);
+                                    builder.show();
+                                } else {
+                                    NotificationUtils.showMessage("Fonts folder is empty", Color.RED, NotificationUtils.LENGTH_SHORT, HookMethods.classLoader);
+                                }
+                            } else {
+                                NotificationUtils.showMessage("Fonts folder is not available", Color.RED, NotificationUtils.LENGTH_SHORT, HookMethods.classLoader);
+                            }
+                            return;
+                        }
+                        case 8: { //textStyle
+                            //TODO: checkboxes
+                            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                            Button button_bold = new Button(context);
+                            Button button_italic = new Button(context);
+                            Button button_bolditalic = new Button(context);
+                            Button button_normal = new Button(context);
+                            LinearLayout linearLayout = new LinearLayout(context);
+                            linearLayout.setOrientation(LinearLayout.VERTICAL);
+                            button_bold.setText(Common.dialog_bold);
+                            button_bold.setOnClickListener(new View.OnClickListener() {
+                                public void onClick(View view) {
+                                    HookMethods.editText.setTypeface(null, Typeface.BOLD);
+                                }
+                            });
+                            button_italic.setText(Common.dialog_italic);
+                            button_italic.setOnClickListener(new View.OnClickListener() {
+                                public void onClick(View view) {
+                                    HookMethods.editText.setTypeface(null, Typeface.ITALIC);
+                                }
+                            });
+                            button_bolditalic.setText(Common.dialog_bolditalic);
+                            button_bolditalic.setOnClickListener(new View.OnClickListener() {
+                                public void onClick(View view) {
+                                    HookMethods.editText.setTypeface(null, Typeface.BOLD_ITALIC);
+                                }
+                            });
+                            button_normal.setText(Common.dialog_normal);
+                            button_normal.setOnClickListener(new View.OnClickListener() {
+                                public void onClick(View view) {
+                                    HookMethods.editText.setTypeface(null, Typeface.NORMAL);
+                                }
+                            });
+                            linearLayout.addView(button_bold);
+                            linearLayout.addView(button_italic);
+                            linearLayout.addView(button_bolditalic);
+                            linearLayout.addView(button_normal);
+                            builder.setView(linearLayout);
+                            builder.setPositiveButton(Common.dialog_done, null);
+                            builder.show();
+                            return;
+                        }
+                        case 9: { //textAlignment
+                            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                            Button button_left = new Button(context);
+                            Button button_center = new Button(context);
+                            Button button_right = new Button(context);
+                            LinearLayout linearLayout = new LinearLayout(context);
+                            linearLayout.setOrientation(LinearLayout.VERTICAL);
+                            button_left.setText(Common.dialog_left);
+                            button_left.setOnClickListener(new View.OnClickListener() {
+                                public void onClick(View view) {
+                                    HookMethods.editText.setGravity(Gravity.START);
+                                }
+                            });
+                            button_center.setText(Common.dialog_center);
+                            button_center.setOnClickListener(new View.OnClickListener() {
+                                public void onClick(View view) {
+                                    HookMethods.editText.setGravity(Gravity.CENTER);
+                                }
+                            });
+                            button_right.setText(Common.dialog_right);
+                            button_right.setOnClickListener(new View.OnClickListener() {
+                                public void onClick(View view) {
+                                    HookMethods.editText.setGravity(Gravity.END);
+                                }
+                            });
+                            linearLayout.addView(button_left);
+                            linearLayout.addView(button_center);
+                            linearLayout.addView(button_right);
+                            builder.setView(linearLayout);
+                            builder.setPositiveButton(Common.dialog_done, null);
+                            builder.show();
+                            return;
+                        }
+                        case 10: { //rainbow
+                            String tempText = HookMethods.editText.getText().toString();
+                            tempText.replace("\\n", "<br />");
+                            tempText.replace("\\r", "<br />");
+                            String[] tempTextArray = tempText.split("");
+                            String newText = "";
+
+                            for (int i = 0; i <= tempText.length(); i++) {
+                                if (!tempTextArray[i].equals(" ")) {
+                                    int c = rColor.nextInt(329);
+                                    newText = newText + "<font color=" + Common.colors[c] + ">" + tempTextArray[i] + "</font>";
+                                } else {
+                                    newText = newText + " ";
+                                }
+                            }
+                            HookMethods.editText.setText(Html.fromHtml(newText));
+                            return;
+                        }
+                        case 11: { //reset
                             HookMethods.editText.setBackgroundDrawable(null);
                             HookMethods.editText.getPaint().reset();
                             HookMethods.editText.setTextColor(Color.WHITE);

@@ -8,7 +8,7 @@
     <string name="pref_debug_title">INFORMATION</string>
 
     <string name="pref_thanks_title">Thanks to</string>
-    <string name="pref_thanks_summary">stirante, Mr. Yawnie, P1ngu1n, manvir, elesbb, chiralcode, Yoganandh, bnalls33, cketti, ddmanfire, MikeOrtiz, sangmingming</string>
+    <string name="pref_thanks_summary">stirante, Mr. Yawnie, andrerm124, m1kep, P1ngu1n, manvir, elesbb, chiralcode, Yoganandh, bnalls33, cketti, ddmanfire, MikeOrtiz, sangmingming</string>
 
     <string name="pref_donate_title">Donate</string>
     <string name="pref_donate_summary">Support me by buying some coffee using PayPal. Donations are highly appreciated.</string>
@@ -77,6 +77,8 @@
     <string name="pref_sticker_title">Enable Custom Stickers</string>
     <string name="pref_sticker_summary_on">Custom stickers will be loaded</string>
     <string name="pref_sticker_summary_off">Custom stickers will NOT be loaded</string>
+    <string name="pref_sticker_wipe_title">Wipe SVG folder</string>
+    <string name="pref_sticker_wipe_summary">Due to recent changes in Snapchat, unzipped SVGs are stored in /data/data/com.snapchat.android/files/twemoji_2_svg . In order to switch to new stickers, you have to wipe that folder. Click here to wipe that, it requires root access.</string>
     <string name="pref_sticker_readme_title">HOW TO USE</string>
     <string name="pref_sticker_readme_summary">To replace stickers, you have to first get SC\'s Emoji zips (can be found in their apk\'s assets folder), the PNG folder stores the previews of the stickers, the SVG folder contains the actual stickers. Each filename represents the unicode code of the Emoji, which they represent. To change the sticker, you have to replace the desired PNG and SVG in their zip, then place the zips in the /SDCARD/Snapprefs/Stickers/ folder (create them). Click here for a tutorial.</string>
     <string name="pref_sticker_readme_summary2">Example SVGs/PNGs can be found at https://github.com/Ranks/emojione</string>
@@ -220,7 +222,7 @@
 
     <string name="pref_max_recording_time_default">10</string>
     <string name="pref_max_recording_time_summary">Tap here to enter a maximum recording time.</string>
-    <string name="pref_max_recording_time_title">Maximum Recording Time</string>
+    <string name="pref_max_recording_time_title">Maximum Recording Time (seconds)</string>
 
     <string name="pref_video_looping_title">Looping Videos</string>
     <string name="pref_video_looping_summary_off">Videos will play once</string>
@@ -365,7 +367,8 @@
     <string name="pref_support_faq_summary" translatable="false">Opens the XDA post containing the Frequently Asked Questions with answers.</string>
     <string name="title_activity_maps">Tap and Hold on a location to spoof</string>
     <string name="str_btn_find">Search</string>
-    <string name="hnt_et_location">Type here a location to find</string>
+    <string name="str_btn_reset">Reset</string>
+    <string name="hnt_et_location">Type a location to find</string>
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">
         AIzaSyDrN_SeVUZ1R7Qz-BggYYeyKuVdKU-NUmg
         <!--AIzaSyD-XNCHffArxbrgQ_-CS1nDXZRTfcEIlO4 DEBUG-->
@@ -391,6 +394,8 @@
     <string name="pref_viewed_summary_on">Stealth viewing will be executed</string>
     <string name="pref_viewed_title">Stealth Viewing</string>
     <string name="pref_viewed_readme_summary">When using Stealth Viewing you may sometimes receive \"ghost snaps\" whereby old snaps display again, this is normal and is due to the way we handle the stealth viewing</string>
+    <string name="pref_na_readme_title">NOT AVAILABLE</string>
+    <string name="pref_na_readme_summary">You don\'t have access to Deluxe options as you are a Premium user. Open the Buy menu to purchase the Deluxe option.</string>
 
     <string name="pref_stealth_chat_saving_summary_off">Stealth chat saving will NOT be executed</string>
     <string name="pref_stealth_chat_saving_summary_on">Stealth chat saving will be executed</string>

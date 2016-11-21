@@ -371,8 +371,17 @@ public class Chat {
                     protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                         super.beforeHookedMethod(param);
                         Logger.log("Clearing Video URI", LogType.CHAT);
-
-                        Uri videoUri = (Uri) getObjectField(param.thisObject, "b");
+                        Uri videoUri = null;
+                        try{
+                             videoUri = (Uri) getObjectField(param.thisObject, "b");
+                        }catch (ClassCastException e){
+                            if(videoUri==null){
+                                Logger.log("ClassCastException ignored: null to Uri", LogType.CHAT);
+                            } else{
+                                Logger.log("ClassCastException ignored: " + videoUri.getClass() + "to Uri", LogType.CHAT);
+                            }
+                            return;
+                        }
                         if( videoUri == null ) {
                             Logger.log("TextureVideoView tried to clear null Uri", LogType.CHAT);
                             return;

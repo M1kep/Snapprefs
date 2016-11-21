@@ -47,6 +47,8 @@ import java.util.regex.Pattern;
 
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XC_MethodReplacement;
+import de.robv.android.xposed.XposedBridge;
+import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
 import static com.marz.snapprefs.Util.StringUtils.obfus;
@@ -58,6 +60,7 @@ import static de.robv.android.xposed.XposedHelpers.getAdditionalInstanceField;
 import static de.robv.android.xposed.XposedHelpers.getObjectField;
 import static de.robv.android.xposed.XposedHelpers.getStaticObjectField;
 import static de.robv.android.xposed.XposedHelpers.setAdditionalInstanceField;
+import static de.robv.android.xposed.XposedHelpers.setDoubleField;
 
 public class Saving {
     //public static final String SNAPCHAT_PACKAGE_NAME = "com.snapchat.android";
@@ -348,7 +351,7 @@ public class Saving {
 
                         String key = (String) param.args[0];
                         //Logger.log("aGgkey: " + key);
-                        if (Preferences.getBool(Prefs.TIMER_UNLIMITED) && key.equals("auto_advance_mode"))
+                        if (Preferences.getBool(Prefs.AUTO_ADVANCE) && key.equals("auto_advance_mode"))
                             param.args[1] = enum_NO_AUTO_ADVANCE;
                         else if (Preferences.getInt(Prefs.TIMER_MINIMUM) !=
                                 Preferences.TIMER_MINIMUM_DISABLED && key.equals("total_duration_sec")) {
@@ -357,25 +360,41 @@ public class Saving {
                     }
                 });
 
-                findAndHookMethod(Obfuscator.save.RECEIVEDSNAP_CLASS, lpparam.classLoader, Obfuscator.save.RECEIVEDSNAP_DISPLAYTIME, new XC_MethodHook() {
-                    @Override
-                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                        //Logger.afterHook("RECEIVEDSNAP - DisplayTime");
-                        Double currentResult = (Double) param.getResult();
-                        Logger.log("Starting with viewtime: " + currentResult, LogType.SAVING);
-
-                        if (Preferences.getBool(Prefs.TIMER_UNLIMITED)) {
-                            findAndHookMethod(Obfuscator.save.CLASS_SNAP_TIMER_VIEW, lpparam.classLoader, Obfuscator.save.METHOD_SNAPTIMERVIEW_ONDRAW, Canvas.class, XC_MethodReplacement.DO_NOTHING);
-                            param.setResult((double) 9999.9F);
-                        } else {
-                            if (Preferences.getInt(Prefs.TIMER_MINIMUM) !=
-                                    Preferences.TIMER_MINIMUM_DISABLED &&
-                                    currentResult < (double) Preferences.getInt(Prefs.TIMER_MINIMUM)) {
-                                param.setResult((double) Preferences.getInt(Prefs.TIMER_MINIMUM));
+                if(Preferences.getBool(Prefs.TIMER_UNLIMITED) || Preferences.getInt(Prefs.TIMER_MINIMUM) !=
+                        Preferences.TIMER_MINIMUM_DISABLED){
+                    XposedBridge.hookAllConstructors(findClass(Obfuscator.save.RECEIVEDSNAP_CLASS, lpparam.classLoader), new XC_MethodHook() {
+                        @Override
+                        protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                            Double currentResult = XposedHelpers.getDoubleField(param.thisObject, Obfuscator.save.MCANONICALDISPLAYNAME);
+                            if (Preferences.getBool(Prefs.TIMER_UNLIMITED)) {
+                                findAndHookMethod(Obfuscator.save.CLASS_SNAP_TIMER_VIEW, lpparam.classLoader, Obfuscator.save.METHOD_SNAPTIMERVIEW_ONDRAW, Canvas.class, XC_MethodReplacement.DO_NOTHING);
+                                setDoubleField(param.thisObject, Obfuscator.save.MCANONICALDISPLAYNAME, (double) 9999.9F);
+                            } else {
+                                if (Preferences.getInt(Prefs.TIMER_MINIMUM) !=
+                                        Preferences.TIMER_MINIMUM_DISABLED &&
+                                        currentResult < (double) Preferences.getInt(Prefs.TIMER_MINIMUM)) {
+                                    setDoubleField(param.thisObject, Obfuscator.save.MCANONICALDISPLAYNAME, (double) Preferences.getInt(Prefs.TIMER_MINIMUM));
+                                }
                             }
                         }
-                    }
-                });
+                    });
+
+                    XposedBridge.hookAllConstructors(findClass(Obfuscator.save.STORYSNAP_CLASS, lpparam.classLoader), new XC_MethodHook() {
+                        @Override
+                        protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                            Double currentResult = XposedHelpers.getDoubleField(param.thisObject, Obfuscator.save.MCANONICALDISPLAYNAME);
+                            if (Preferences.getBool(Prefs.TIMER_UNLIMITED)) {
+                                setDoubleField(param.thisObject, Obfuscator.save.MCANONICALDISPLAYNAME, (double) 9999.9F);
+                            } else {
+                                if (Preferences.getInt(Prefs.TIMER_MINIMUM) !=
+                                        Preferences.TIMER_MINIMUM_DISABLED &&
+                                        currentResult < (double) Preferences.getInt(Prefs.TIMER_MINIMUM)) {
+                                    setDoubleField(param.thisObject, Obfuscator.save.MCANONICALDISPLAYNAME, (double) Preferences.getInt(Prefs.TIMER_MINIMUM));
+                                }
+                            }
+                        }
+                    });
+                }
             }
 
             if (Preferences.getBool(Prefs.HIDE_TIMER_SNAP)) {
@@ -384,6 +403,7 @@ public class Saving {
             }
             if (Preferences.getBool(Prefs.HIDE_TIMER_STORY)) {
                 // UPDATED METHOD & CONTENT
+                findAndHookMethod(Obfuscator.save.CLASS_NEW_STORY_TIMER_VIEW, lpparam.classLoader, Obfuscator.save.METHOD_STORYTIMERVIEW_ONDRAW, Canvas.class, XC_MethodReplacement.DO_NOTHING);
                 findAndHookMethod(Obfuscator.save.CLASS_STORY_TIMER_VIEW, lpparam.classLoader, Obfuscator.save.METHOD_STORYTIMERVIEW_ONDRAW, Canvas.class, XC_MethodReplacement.DO_NOTHING);
             }
             if (Preferences.getBool(Prefs.LOOPING_VIDS)) {
@@ -607,7 +627,7 @@ public class Saving {
                 }
             } else if (bryoName.equals(Obfuscator.save.SNAPIMAGEBRYO_CLASS)) {
                 Logger.printMessage("Media Type: IMAGE", LogType.SAVING);
-                Bitmap bmp = (Bitmap) callMethod(snapEditorView, Obfuscator.save.METHOD_GET_SENT_BITMAP, activity);
+                Bitmap bmp = (Bitmap) callMethod(snapEditorView, Obfuscator.save.METHOD_GET_SENT_BITMAP, activity, true);
                 if (bmp != null) {
                     Logger.printMessage("Sent image found - Trying to save", LogType.SAVING);
                     response = saveSnap(SnapType.SENT, MediaType.IMAGE,

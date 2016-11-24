@@ -170,7 +170,7 @@ public class HookedLayouts {
     public static void addProfileUploadButton(final XC_InitPackageResources.InitPackageResourcesParam resparam,
                                               final XModuleResources moduleResources) {
         resparam.res.hookLayout(Common.PACKAGE_SNAP, "layout", "profile_picture_view", new XC_LayoutInflated() {
-            public void handleLayoutInflated(LayoutInflatedParam liparam) throws Throwable {
+            public void handleLayoutInflated(final LayoutInflatedParam liparam) throws Throwable {
 
                 final RelativeLayout mainLayout = (RelativeLayout) liparam.view;
 
@@ -191,12 +191,22 @@ public class HookedLayouts {
                     @Override
                     public void onClick(View view) {
                         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(HookMethods.SnapContext);
-                        dialogBuilder.setView(inflater.inflate(R.layout.profile_image_uploader_layout, null, false));
+                        View uploaderLayout = inflater.inflate(R.layout.profile_image_uploader_layout, null, false);
+                        ImageButton imgageBtn1 = (ImageButton) view.findViewById(R.id.profile_image1_btn);
+                        imgageBtn1.setOnClickListener(new OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Toast.makeText(HookMethods.SnapContext, "Your caption is missing", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                        dialogBuilder.setView(uploaderLayout);
                         dialogBuilder.setPositiveButton("Test Button", null);
                         AlertDialog dialog = dialogBuilder.create();
                         dialog.show();
                     }
                 });
+
+
                 mainLayout.addView(uploadBtn);
             }
         });

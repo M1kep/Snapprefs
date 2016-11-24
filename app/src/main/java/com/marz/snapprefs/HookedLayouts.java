@@ -192,7 +192,7 @@ public class HookedLayouts {
                     public void onClick(View view) {
                         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(HookMethods.SnapContext);
                         dialogBuilder.setView(inflater.inflate(R.layout.profile_image_uploader_layout, null, false));
-                        dialogBuilder.setPositiveButton("Fuck Button", null);
+                        dialogBuilder.setPositiveButton("Test Button", null);
                         AlertDialog dialog = dialogBuilder.create();
                         dialog.show();
                     }

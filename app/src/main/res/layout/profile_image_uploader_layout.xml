@@ -20,8 +20,9 @@
                 android:gravity="center" />
 
             <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="300dp"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_centerHorizontal="true"
                 android:id="@+id/profile_image1_btn"
                 android:contentDescription="Image 1 Of The Profile Images"
                 android:layout_below="@id/profile_image_uploader_header_txt_view"
@@ -30,8 +31,9 @@
 
 
             <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="300dp"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_centerHorizontal="true"
                 android:id="@+id/profile_image2_btn"
                 android:contentDescription="Image 2 Of The Profile Images"
                 android:layout_below="@id/profile_image1_btn"
@@ -39,8 +41,9 @@
                 android:src="@drawable/profile_image_uploader_no_image_selected" />
 
             <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="300dp"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_centerHorizontal="true"
                 android:id="@+id/profile_image3_btn"
                 android:contentDescription="Image 3 Of The Profile Images"
                 android:layout_below="@id/profile_image2_btn"
@@ -48,8 +51,9 @@
                 android:src="@drawable/profile_image_uploader_no_image_selected" />
 
             <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="300dp"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_centerHorizontal="true"
                 android:id="@+id/profile_image4_btn"
                 android:contentDescription="Image 4 Of The Profile Images"
                 android:layout_below="@id/profile_image3_btn"
@@ -57,8 +61,9 @@
                 android:src="@drawable/profile_image_uploader_no_image_selected" />
 
             <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="300dp"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_centerHorizontal="true"
                 android:id="@+id/profile_image5_btn"
                 android:contentDescription="Image 5 Of The Profile Images"
                 android:layout_below="@id/profile_image4_btn"

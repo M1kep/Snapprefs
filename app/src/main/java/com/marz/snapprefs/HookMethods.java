@@ -445,12 +445,13 @@ public class HookMethods
                                     int requestCode = (int) param.args[0];
                                     int resultCode = (int) param.args[1];
                                     Intent data = (Intent) param.args[2];
+                                    Context spContext = SnapContext.createPackageContext("com.marz.snapprefs", Context.CONTEXT_IGNORE_SECURITY);
                                     if(resultCode == RESULT_OK) {
                                         switch (requestCode) {
                                             case 1:
                                                 try {
                                                     final Uri imageUri = data.getData();
-                                                    final InputStream imgStream = context.getContentResolver().openInputStream(imageUri);
+                                                    final InputStream imgStream = spContext.getContentResolver().openInputStream(imageUri);
                                                     final Bitmap chosenImg = BitmapFactory.decodeStream(imgStream);
                                                     HookedLayouts.imgBtn1.setImageBitmap(chosenImg);
                                                 } catch (FileNotFoundException e) {
@@ -459,7 +460,7 @@ public class HookMethods
                                             case 2:
                                                 try {
                                                     final Uri imageUri = data.getData();
-                                                    final InputStream imgStream = context.getContentResolver().openInputStream(imageUri);
+                                                    final InputStream imgStream = spContext.getContentResolver().openInputStream(imageUri);
                                                     final Bitmap chosenImg = BitmapFactory.decodeStream(imgStream);
                                                     HookedLayouts.imgBtn2.setImageBitmap(chosenImg);
                                                 } catch (FileNotFoundException e) {
@@ -468,7 +469,7 @@ public class HookMethods
                                             case 3:
                                                 try {
                                                     final Uri imageUri = data.getData();
-                                                    final InputStream imgStream = context.getContentResolver().openInputStream(imageUri);
+                                                    final InputStream imgStream = spContext.getContentResolver().openInputStream(imageUri);
                                                     final Bitmap chosenImg = BitmapFactory.decodeStream(imgStream);
                                                     HookedLayouts.imgBtn3.setImageBitmap(chosenImg);
                                                 } catch (FileNotFoundException e) {
@@ -477,7 +478,7 @@ public class HookMethods
                                             case 4:
                                                 try {
                                                     final Uri imageUri = data.getData();
-                                                    final InputStream imgStream = context.getContentResolver().openInputStream(imageUri);
+                                                    final InputStream imgStream = spContext.getContentResolver().openInputStream(imageUri);
                                                     final Bitmap chosenImg = BitmapFactory.decodeStream(imgStream);
                                                     HookedLayouts.imgBtn4.setImageBitmap(chosenImg);
                                                 } catch (FileNotFoundException e) {
@@ -486,7 +487,7 @@ public class HookMethods
                                             case 5:
                                                 try {
                                                     final Uri imageUri = data.getData();
-                                                    final InputStream imgStream = context.getContentResolver().openInputStream(imageUri);
+                                                    final InputStream imgStream = spContext.getContentResolver().openInputStream(imageUri);
                                                     final Bitmap chosenImg = BitmapFactory.decodeStream(imgStream);
                                                     HookedLayouts.imgBtn5.setImageBitmap(chosenImg);
                                                 } catch (FileNotFoundException e) {

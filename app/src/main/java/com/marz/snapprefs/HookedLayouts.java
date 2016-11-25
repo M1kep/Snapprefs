@@ -192,7 +192,7 @@ public class HookedLayouts {
                     public void onClick(View view) {
                         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(HookMethods.SnapContext);
                         View uploaderLayout = inflater.inflate(R.layout.profile_image_uploader_layout, null, false);
-                        ImageButton imgageBtn1 = (ImageButton) view.findViewById(R.id.profile_image1_btn);
+                        ImageButton imgageBtn1 = (ImageButton) uploaderLayout.findViewById(R.id.profile_image1_btn);
                         imgageBtn1.setOnClickListener(new OnClickListener() {
                             @Override
                             public void onClick(View v) {

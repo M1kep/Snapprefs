@@ -76,6 +76,7 @@ import de.robv.android.xposed.callbacks.XC_LayoutInflated;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
 import static com.marz.snapprefs.Dialogs.rColor;
+import static de.robv.android.xposed.XposedHelpers.callMethod;
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 import static de.robv.android.xposed.XposedHelpers.setAdditionalInstanceField;
 
@@ -88,6 +89,12 @@ public class HookedLayouts {
     public static RelativeLayout outerOptionsLayout = null;
     public static ImageButton saveSnapButton;
     public static ArrayList<AssignedStoryButton> storyButtonQueue = new ArrayList<>();
+
+    public static ImageButton imgBtn1 = null;
+    public static ImageButton imgBtn2 = null;
+    public static ImageButton imgBtn3 = null;
+    public static ImageButton imgBtn4 = null;
+    public static ImageButton imgBtn5 = null;
 
     public static void initIntegration(XC_LoadPackage.LoadPackageParam lpparam,
                                        final XModuleResources mResources) {
@@ -190,22 +197,20 @@ public class HookedLayouts {
                 uploadBtn.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Intent newIntent = new Intent(HookMethods.context, profile_Image_uploader_activity.class);
-                        newIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        HookMethods.context.startActivity(newIntent);
-//                        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(HookMethods.SnapContext);
-//                        View uploaderLayout = inflater.inflate(R.layout.profile_image_uploader_layout, null, false);
-//                        ImageButton imgageBtn1 = (ImageButton) uploaderLayout.findViewById(R.id.profile_image1_btn);
-//                        imgageBtn1.setOnClickListener(new OnClickListener() {
-//                            @Override
-//                            public void onClick(View v) {
-//                                Toast.makeText(HookMethods.SnapContext, "Your caption is missing", Toast.LENGTH_SHORT).show();
-//                            }
-//                        });
-//                        dialogBuilder.setView(uploaderLayout);
-//                        dialogBuilder.setPositiveButton("Test Button", null);
-//                        AlertDialog dialog = dialogBuilder.create();
-//                        dialog.show();
+                        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(HookMethods.SnapContext);
+                        View uploaderLayout = inflater.inflate(R.layout.profile_image_uploader_layout, null, false);
+                        imgBtn1 = (ImageButton) uploaderLayout.findViewById(R.id.profile_image1_btn);
+                        imgBtn1.setOnClickListener(new OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent pickPhoto = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                                HookMethods.SnapContext.startActivityForResult(pickPhoto, 1);
+                            }
+                        });
+                        dialogBuilder.setView(uploaderLayout);
+                        dialogBuilder.setPositiveButton("Test Button", null);
+                        AlertDialog dialog = dialogBuilder.create();
+                        dialog.show();
                     }
                 });
 

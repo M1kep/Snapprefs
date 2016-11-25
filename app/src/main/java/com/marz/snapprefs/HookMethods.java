@@ -3,6 +3,7 @@ package com.marz.snapprefs;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
@@ -12,6 +13,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -31,6 +33,8 @@ import com.marz.snapprefs.Util.NotificationUtils;
 import com.marz.snapprefs.Util.XposedUtils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
@@ -46,6 +50,7 @@ import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_InitPackageResources.InitPackageResourcesParam;
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
 
+import static android.app.Activity.RESULT_OK;
 import static com.marz.snapprefs.HookedLayouts.addProfileUploadButton;
 import static de.robv.android.xposed.XposedBridge.hookAllConstructors;
 import static de.robv.android.xposed.XposedHelpers.callMethod;
@@ -429,9 +434,112 @@ public class HookMethods
                                 Stickers.initStickers(lpparam, modRes, SnapContext);
                             }
 
-                            if (Preferences.getLicence() > 0)
+                            if (Preferences.getLicence() > 0){
                                 Premium.initPremium(lpparam);
+                            }
 
+                            XposedHelpers.findAndHookMethod("com.snapchat.android.LandingPageActivity", lpparam.classLoader, "onActivityResult", int.class, int.class, XposedHelpers.findClass("android.content.Intent", lpparam.classLoader), new XC_MethodHook() {
+                                @Override
+                                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                                    super.beforeHookedMethod(param);
+                                    int requestCode = (int) param.args[0];
+                                    int resultCode = (int) param.args[1];
+                                    Intent data = (Intent) param.args[2];
+                                    if(resultCode == RESULT_OK) {
+                                        switch (requestCode) {
+                                            case 1:
+                                                try {
+                                                    final Uri imageUri = data.getData();
+                                                    final InputStream imgStream = context.getContentResolver().openInputStream(imageUri);
+                                                    final Bitmap chosenImg = BitmapFactory.decodeStream(imgStream);
+                                                    HookedLayouts.imgBtn1.setImageBitmap(chosenImg);
+                                                } catch (FileNotFoundException e) {
+                                                    e.printStackTrace();
+                                                }
+                                            case 2:
+                                                try {
+                                                    final Uri imageUri = data.getData();
+                                                    final InputStream imgStream = context.getContentResolver().openInputStream(imageUri);
+                                                    final Bitmap chosenImg = BitmapFactory.decodeStream(imgStream);
+                                                    HookedLayouts.imgBtn2.setImageBitmap(chosenImg);
+                                                } catch (FileNotFoundException e) {
+                                                    e.printStackTrace();
+                                                }
+                                            case 3:
+                                                try {
+                                                    final Uri imageUri = data.getData();
+                                                    final InputStream imgStream = context.getContentResolver().openInputStream(imageUri);
+                                                    final Bitmap chosenImg = BitmapFactory.decodeStream(imgStream);
+                                                    HookedLayouts.imgBtn3.setImageBitmap(chosenImg);
+                                                } catch (FileNotFoundException e) {
+                                                    e.printStackTrace();
+                                                }
+                                            case 4:
+                                                try {
+                                                    final Uri imageUri = data.getData();
+                                                    final InputStream imgStream = context.getContentResolver().openInputStream(imageUri);
+                                                    final Bitmap chosenImg = BitmapFactory.decodeStream(imgStream);
+                                                    HookedLayouts.imgBtn4.setImageBitmap(chosenImg);
+                                                } catch (FileNotFoundException e) {
+                                                    e.printStackTrace();
+                                                }
+                                            case 5:
+                                                try {
+                                                    final Uri imageUri = data.getData();
+                                                    final InputStream imgStream = context.getContentResolver().openInputStream(imageUri);
+                                                    final Bitmap chosenImg = BitmapFactory.decodeStream(imgStream);
+                                                    HookedLayouts.imgBtn5.setImageBitmap(chosenImg);
+                                                } catch (FileNotFoundException e) {
+                                                    e.printStackTrace();
+                                                }
+                                        }
+                                    }
+
+                                }
+                            });
+
+//                            XposedHelpers.findAndHookMethod("com.snapchat.android.LandingPageActivity", lpparam.classLoader, "onActivityResult", int.class, int.class, XposedHelpers.findClass("android.content.Intent", lpparam.classLoader), new XC_MethodReplacement() {
+//                                @Override
+//                                protected Object replaceHookedMethod(MethodHookParam methodHookParam) throws Throwable {
+//                                    Object thisObject = methodHookParam.thisObject;
+//                                    int i = (int) methodHookParam.args[0];
+//                                    int i2 = (int) methodHookParam.args[1];
+//                                    Intent intent = (Intent) methodHookParam.args[2];
+//                                    Object blS = getObjectField(thisObject, "blS");
+//
+//                                    XposedHelpers.callMethod(thisObject, "k");
+//                                    findClass("bmk", lpparam.classLoader);
+//                                    Class<?> bmk = findClass("bmk", lpparam.classLoader);
+//                                    Object ad = getObjectField(thisObject, "ad");
+//                                    Object a = getObjectField(ad, "a");
+//                                    Object bmkVar = callMethod(a, "get", int.class, i);
+//                                    if(bmkVar != null) {
+//                                        try {
+//                                            callMethod(blS, "a", int.class, int.class, getObjectField(bmkVar, "a"), i);
+//                                            if(intent == null) {
+//                                                callMethod(bmkVar, "a", int.class, 10003);
+//                                            } else  {
+//                                                int intExtra = intent.getIntExtra("RESPONSE_CODE", 0);
+//                                                if(i2 == -1 && intExtra == 0) {
+//                                                    String stringExtra = intent.getStringExtra("INAPP_PURCHASE_DATA");
+//                                                    String stringExtra2 = intent.getStringExtra("INAPP_DATA_SIGNITURE");
+//                                                    callMethod(blS, "a", String.class, stringExtra);
+//                                                    callMethod(blS, "a", String.class, stringExtra2);
+//                                                    //new bmi and new a
+//                                                }
+//                                            }
+//                                        } catch (Exception e) {
+//                                            callMethod(bmkVar, "a", Exception.class, e);
+//                                        }
+//                                    }
+//
+//
+//
+//
+//
+//                                    return null;
+//                                }
+//                            };
                             /*hookAllConstructors(ahO, new XC_MethodHook() {
                                         @Override
                                         protected void afterHookedMethod(MethodHookParam param) throws Throwable {

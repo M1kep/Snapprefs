@@ -191,6 +191,7 @@ public class HookedLayouts {
                     @Override
                     public void onClick(View view) {
                         Intent newIntent = new Intent(HookMethods.context, profile_Image_uploader_activity.class);
+                        newIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         HookMethods.context.startActivity(newIntent);
 //                        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(HookMethods.SnapContext);
 //                        View uploaderLayout = inflater.inflate(R.layout.profile_image_uploader_layout, null, false);

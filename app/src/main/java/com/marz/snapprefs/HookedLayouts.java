@@ -90,11 +90,9 @@ public class HookedLayouts {
     public static ImageButton saveSnapButton;
     public static ArrayList<AssignedStoryButton> storyButtonQueue = new ArrayList<>();
 
-    public static ImageButton imgBtn1 = null;
-    public static ImageButton imgBtn2 = null;
-    public static ImageButton imgBtn3 = null;
-    public static ImageButton imgBtn4 = null;
-    public static ImageButton imgBtn5 = null;
+
+    public static ImageButton[] profileImgBtns = new ImageButton[5];
+
 
     public static void initIntegration(XC_LoadPackage.LoadPackageParam lpparam,
                                        final XModuleResources mResources) {
@@ -199,16 +197,65 @@ public class HookedLayouts {
                     public void onClick(View view) {
                         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(HookMethods.SnapContext);
                         View uploaderLayout = inflater.inflate(R.layout.profile_image_uploader_layout, null, false);
-                        imgBtn1 = (ImageButton) uploaderLayout.findViewById(R.id.profile_image1_btn);
-                        imgBtn1.setOnClickListener(new OnClickListener() {
+
+                        profileImgBtns[0] = (ImageButton) uploaderLayout.findViewById(R.id.profile_image1_btn);
+                        profileImgBtns[0].setOnClickListener(new OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 Intent pickPhoto = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                                 HookMethods.SnapContext.startActivityForResult(pickPhoto, 1);
                             }
                         });
+
+                        profileImgBtns[1] = (ImageButton) uploaderLayout.findViewById(R.id.profile_image2_btn);
+                        profileImgBtns[1].setOnClickListener(new OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent pickPhoto = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                                HookMethods.SnapContext.startActivityForResult(pickPhoto, 2);
+                            }
+                        });
+
+                        profileImgBtns[2] = (ImageButton) uploaderLayout.findViewById(R.id.profile_image3_btn);
+                        profileImgBtns[2].setOnClickListener(new OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent pickPhoto = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                                HookMethods.SnapContext.startActivityForResult(pickPhoto, 3);
+                            }
+                        });
+
+                        profileImgBtns[3] = (ImageButton) uploaderLayout.findViewById(R.id.profile_image4_btn);
+                        profileImgBtns[3].setOnClickListener(new OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent pickPhoto = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                                HookMethods.SnapContext.startActivityForResult(pickPhoto, 4);
+                            }
+                        });
+
+                        profileImgBtns[4] = (ImageButton) uploaderLayout.findViewById(R.id.profile_image5_btn);
+                        profileImgBtns[4].setOnClickListener(new OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent pickPhoto = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                                HookMethods.SnapContext.startActivityForResult(pickPhoto, 5);
+                            }
+                        });
                         dialogBuilder.setView(uploaderLayout);
-                        dialogBuilder.setPositiveButton("Test Button", null);
+                        dialogBuilder.setPositiveButton("Test Button", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                LogType t = LogType.DEBUG;
+                                Logger.printTitle("Images To Be Uploaded!", t);
+                                for (ImageButton btn : profileImgBtns) {
+                                    Bitmap img = ((BitmapDrawable) btn.getDrawable()).getBitmap();
+                                    Logger.printMessage("Image Bitmap: " + img, t);
+                                    Logger.printMessage("Image Width x Height: " + img.getWidth() + " x " + img.getHeight(), t);
+                                    Logger.printFilledRow(t);
+                                }
+                            }
+                        });
                         AlertDialog dialog = dialogBuilder.create();
                         dialog.show();
                     }

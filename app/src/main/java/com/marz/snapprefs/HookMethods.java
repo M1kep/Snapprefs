@@ -454,39 +454,6 @@ public class HookMethods
                                         dir.mkdirs();
                                         switch (requestCode) {
                                             case 1:
-//                                                SnapContext.runOnUiThread(new Runnable() {
-//                                                    @Override
-//                                                    public void run() {
-//                                                        try {
-//                                                            final Uri imageUri = data.getData();
-//                                                            final InputStream imgStream = spContext.getContentResolver().openInputStream(imageUri);
-//                                                            final Bitmap chosenImg = BitmapFactory.decodeStream(imgStream);
-//                                                            HookedLayouts.imgBtn1.setImageBitmap(chosenImg);
-//                                                        } catch (FileNotFoundException e) {
-//                                                            e.printStackTrace();
-//                                                        }
-//                                                    }
-//                                                });
-                                                Uri imageUri = data.getData();
-                                                File out = File.createTempFile("profImg1", ".nomedia", dir);
-                                                UCrop.Options opt = new UCrop.Options();
-                                                opt.setAllowedGestures(UCropActivity.ALL, UCropActivity.ALL, UCropActivity.ALL);
-                                                opt.setCompressionFormat(Bitmap.CompressFormat.PNG);
-                                                opt.setCompressionQuality(100);
-                                                UCrop.of(imageUri, Uri.fromFile(out))
-                                                        .withAspectRatio(1, 1)
-                                                        .withMaxResultSize(200, 200)
-                                                        .withOptions(opt)
-                                                        .start(SnapContext, 6);
-                                            case 2:
-
-                                            case 3:
-
-                                            case 4:
-
-                                            case 5:
-
-                                            case 6:
                                                 SnapContext.runOnUiThread(new Runnable() {
                                                     @Override
                                                     public void run() {
@@ -494,7 +461,74 @@ public class HookMethods
                                                             final Uri imageUri = data.getData();
                                                             final InputStream imgStream = spContext.getContentResolver().openInputStream(imageUri);
                                                             final Bitmap chosenImg = BitmapFactory.decodeStream(imgStream);
-                                                            HookedLayouts.imgBtn1.setImageBitmap(chosenImg);
+                                                            HookedLayouts.profileImgBtns[0].setImageBitmap(chosenImg);
+                                                        } catch (FileNotFoundException e) {
+                                                            e.printStackTrace();
+                                                        }
+                                                    }
+                                                });
+//                                                Uri imageUri = data.getData();
+//                                                File out = File.createTempFile("profImg1", ".nomedia", dir);
+//                                                UCrop.Options opt = new UCrop.Options();
+//                                                opt.setAllowedGestures(UCropActivity.ALL, UCropActivity.ALL, UCropActivity.ALL);
+//                                                opt.setCompressionFormat(Bitmap.CompressFormat.PNG);
+//                                                opt.setCompressionQuality(100);
+//                                                UCrop.of(imageUri, Uri.fromFile(out))
+//                                                        .withAspectRatio(1, 1)
+//                                                        .withMaxResultSize(200, 200)
+//                                                        .withOptions(opt)
+//                                                        .start(SnapContext, 6);
+                                            case 2:
+                                                SnapContext.runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        try {
+                                                            final Uri imageUri = data.getData();
+                                                            final InputStream imgStream = spContext.getContentResolver().openInputStream(imageUri);
+                                                            final Bitmap chosenImg = BitmapFactory.decodeStream(imgStream);
+                                                            HookedLayouts.profileImgBtns[1].setImageBitmap(chosenImg);
+                                                        } catch (FileNotFoundException e) {
+                                                            e.printStackTrace();
+                                                        }
+                                                    }
+                                                });
+                                            case 3:
+                                                SnapContext.runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        try {
+                                                            final Uri imageUri = data.getData();
+                                                            final InputStream imgStream = spContext.getContentResolver().openInputStream(imageUri);
+                                                            final Bitmap chosenImg = BitmapFactory.decodeStream(imgStream);
+                                                            HookedLayouts.profileImgBtns[2].setImageBitmap(chosenImg);
+                                                        } catch (FileNotFoundException e) {
+                                                            e.printStackTrace();
+                                                        }
+                                                    }
+                                                });
+                                            case 4:
+                                                SnapContext.runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        try {
+                                                            final Uri imageUri = data.getData();
+                                                            final InputStream imgStream = spContext.getContentResolver().openInputStream(imageUri);
+                                                            final Bitmap chosenImg = BitmapFactory.decodeStream(imgStream);
+                                                            HookedLayouts.profileImgBtns[3].setImageBitmap(chosenImg);
+                                                        } catch (FileNotFoundException e) {
+                                                            e.printStackTrace();
+                                                        }
+                                                    }
+                                                });
+                                            case 5:
+                                                SnapContext.runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        try {
+                                                            final Uri imageUri = data.getData();
+                                                            final InputStream imgStream = spContext.getContentResolver().openInputStream(imageUri);
+                                                            final Bitmap chosenImg = BitmapFactory.decodeStream(imgStream);
+                                                            HookedLayouts.profileImgBtns[4].setImageBitmap(chosenImg);
                                                         } catch (FileNotFoundException e) {
                                                             e.printStackTrace();
                                                         }

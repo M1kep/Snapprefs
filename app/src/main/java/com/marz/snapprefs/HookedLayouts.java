@@ -190,19 +190,21 @@ public class HookedLayouts {
                 uploadBtn.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(HookMethods.SnapContext);
-                        View uploaderLayout = inflater.inflate(R.layout.profile_image_uploader_layout, null, false);
-                        ImageButton imgageBtn1 = (ImageButton) uploaderLayout.findViewById(R.id.profile_image1_btn);
-                        imgageBtn1.setOnClickListener(new OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Toast.makeText(HookMethods.SnapContext, "Your caption is missing", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                        dialogBuilder.setView(uploaderLayout);
-                        dialogBuilder.setPositiveButton("Test Button", null);
-                        AlertDialog dialog = dialogBuilder.create();
-                        dialog.show();
+                        Intent newIntent = new Intent(HookMethods.context, profile_Image_uploader_activity.class);
+                        HookMethods.context.startActivity(newIntent);
+//                        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(HookMethods.SnapContext);
+//                        View uploaderLayout = inflater.inflate(R.layout.profile_image_uploader_layout, null, false);
+//                        ImageButton imgageBtn1 = (ImageButton) uploaderLayout.findViewById(R.id.profile_image1_btn);
+//                        imgageBtn1.setOnClickListener(new OnClickListener() {
+//                            @Override
+//                            public void onClick(View v) {
+//                                Toast.makeText(HookMethods.SnapContext, "Your caption is missing", Toast.LENGTH_SHORT).show();
+//                            }
+//                        });
+//                        dialogBuilder.setView(uploaderLayout);
+//                        dialogBuilder.setPositiveButton("Test Button", null);
+//                        AlertDialog dialog = dialogBuilder.create();
+//                        dialog.show();
                     }
                 });
 

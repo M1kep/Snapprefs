@@ -230,8 +230,6 @@
     <string name="pref_forcenavbar_default" translatable="false">0</string>
 
 
-
-
     <string name="pref_custom_filter_cb_title">Enable Custom Filters</string>
     <string name="pref_custom_filter_cb_summary_on">Select a custom filter below</string>
     <string name="pref_custom_filter_cb_summary_off">Custom filters are disabled</string>

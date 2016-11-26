@@ -229,7 +229,6 @@
     <string name="pref_video_looping_summary_on">Videos will be looped for as long as you want</string>
     <string name="pref_forcenavbar_default" translatable="false">0</string>
 
-
     <string name="pref_custom_filter_cb_title">Enable Custom Filters</string>
     <string name="pref_custom_filter_cb_summary_on">Select a custom filter below</string>
     <string name="pref_custom_filter_cb_summary_off">Custom filters are disabled</string>
@@ -246,7 +245,6 @@
         <item>Full screen</item>
         <item>Banner</item>
     </string-array>
-
 
     <string-array name="pref_filter_values" translatable="false">
         <item>0</item>
@@ -272,8 +270,6 @@
     </string-array>
 
     <!-- Folder settings -->
-
-
     <string name="pref_category_folder">Folder</string>
     <string name="pref_hide_location_title">Hide a Folder</string>
     <string name="pref_save_location_title">Saving Location</string>
@@ -285,7 +281,6 @@
     <string name="pref_sort_files_username_summary_off">Files will be saved into the same folder for each sender</string>
 
     <!-- Toast messages -->
-
     <string name="image_exists">This image already exists.</string>
     <string name="video_exists">This video already exists.</string>
     <string name="nomedia_exists">This folder is already hidden.</string>

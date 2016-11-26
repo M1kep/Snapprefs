@@ -168,7 +168,6 @@
 
         <service android:name=".GCMIntentService" />
         <!-- make sure to add google-play-services_lib from  project properties->android->library -->
-        <activity android:name=".profile_Image_uploader_activity"></activity>
     </application>
 
 </manifest>

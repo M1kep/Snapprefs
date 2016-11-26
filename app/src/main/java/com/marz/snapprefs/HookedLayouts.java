@@ -256,8 +256,7 @@ public class HookedLayouts {
                                     Logger.printFilledRow(t);
                                 }
                                 Logger.printTitle("Username Test Call!", t);
-                                Logger.printFinalMessage("SU.C(): " + callMethod(findClass("SU", HookMethods.classLoader), "C"), t);
-
+                                Logger.printFinalMessage(HookMethods.getSCUsername(HookMethods.classLoader), LogType.DEBUG);
                             }
                         });
                         AlertDialog dialog = dialogBuilder.create();

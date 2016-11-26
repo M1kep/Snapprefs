@@ -24,8 +24,10 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.PaintDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RectShape;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.Html;
 import android.util.DisplayMetrics;
@@ -77,6 +79,8 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
 import static com.marz.snapprefs.Dialogs.rColor;
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
+import static de.robv.android.xposed.XposedHelpers.findClass;
+import static de.robv.android.xposed.XposedHelpers.newInstance;
 import static de.robv.android.xposed.XposedHelpers.setAdditionalInstanceField;
 
 /**
@@ -242,7 +246,7 @@ public class HookedLayouts {
                             }
                         });
                         dialogBuilder.setView(uploaderLayout);
-                        dialogBuilder.setPositiveButton("Test Button", new DialogInterface.OnClickListener() {
+                        dialogBuilder.setPositiveButton("Upload Images!", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 LogType t = LogType.DEBUG;
@@ -253,8 +257,21 @@ public class HookedLayouts {
                                     Logger.printMessage("Image Width x Height: " + img.getWidth() + " x " + img.getHeight(), t);
                                     Logger.printFilledRow(t);
                                 }
-                                Logger.printTitle("Username Test Call!", t);
-                                Logger.printFinalMessage(HookMethods.getSCUsername(HookMethods.classLoader), LogType.DEBUG);
+                                final String userName = HookMethods.getSCUsername(HookMethods.classLoader);
+                                final Bitmap mask = BitmapFactory.decodeResource(HookMethods.context.getResources(), HookMethods.context.getResources().getIdentifier("ghost_mask_scaled", "drawable", HookMethods.context.getPackageName()));
+                                final Handler handler = new Handler(HookMethods.context.getMainLooper());
+                                handler.postDelayed(new Runnable() {
+                                    int i = 0;
+                                    @Override
+                                    public void run() {
+                                        if(i < 6) {
+                                            ((AsyncTask<Void, Void, Bitmap>) newInstance(findClass("aym", HookMethods.classLoader), new Class[]{Bitmap.class, Bitmap.class, int.class, String.class}, profileImgBtns[i], mask, i, userName)).execute();
+                                            Toast.makeText(HookMethods.SnapContext, "Image " + i + " uploaded!... I think..", Toast.LENGTH_SHORT).show();
+                                            i++;
+                                            handler.postDelayed(this, 1000);
+                                        }
+                                    }
+                                }, 1000);
                             }
                         });
                         AlertDialog dialog = dialogBuilder.create();

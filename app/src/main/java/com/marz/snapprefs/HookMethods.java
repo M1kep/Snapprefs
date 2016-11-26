@@ -511,7 +511,7 @@ public class HookMethods
                                                             final Uri imageUri = data.getData();
                                                             final InputStream imgStream = spContext.getContentResolver().openInputStream(imageUri);
                                                             final Bitmap chosenImg = BitmapFactory.decodeStream(imgStream);
-                                                            HookedLayouts.profileImgBtns[1].setImageBitmap(Bitmap.createScaledBitmap(chosenImg, 200, 200, false));
+                                                            HookedLayouts.profileImgBtns[1].setImageBitmap(chosenImg);
                                                         } catch (FileNotFoundException e) {
                                                             e.printStackTrace();
                                                         }

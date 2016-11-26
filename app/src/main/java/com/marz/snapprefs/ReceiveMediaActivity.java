@@ -89,8 +89,6 @@ public class ReceiveMediaActivity extends Activity implements DialogInterface.On
                                 UCrop.of(mediaUri, Uri.fromFile(out))
                                         .withAspectRatio(9, 16)
                                         .withMaxResultSize(1080, 1920)
-                                //       .withAspectRatio(1, 1)
-                                //       .withMaxResultSize(200, 200)
                                         .withOptions(options)
                                         .start(this);
                             }

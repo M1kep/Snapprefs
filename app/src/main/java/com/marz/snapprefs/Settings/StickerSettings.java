@@ -1,31 +1,16 @@
 package com.marz.snapprefs.Settings;
 
 import android.app.AlertDialog;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.preference.Preference;
-import android.support.v7.preference.Preference.OnPreferenceClickListener;
 import android.support.v7.preference.PreferenceFragmentCompat;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.LinearLayout;
-import android.widget.Switch;
 
-import com.marz.snapprefs.Logger;
-import com.marz.snapprefs.Logger.LogType;
 import com.marz.snapprefs.MainActivity;
-import com.marz.snapprefs.Preferences;
-import com.marz.snapprefs.R;
 
 import java.io.File;
-import java.util.HashSet;
 
 /**
  * Created by MARZ on 2016. 02. 11..

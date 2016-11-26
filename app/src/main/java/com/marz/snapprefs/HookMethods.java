@@ -32,8 +32,6 @@ import com.marz.snapprefs.Preferences.Prefs;
 import com.marz.snapprefs.Util.DebugHelper;
 import com.marz.snapprefs.Util.NotificationUtils;
 import com.marz.snapprefs.Util.XposedUtils;
-import com.yalantis.ucrop.UCrop;
-import com.yalantis.ucrop.UCropActivity;
 
 import java.io.File;
 import java.io.FileNotFoundException;

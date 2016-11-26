@@ -13,7 +13,6 @@ import com.marz.snapprefs.Logger.LogType;
 import java.util.ArrayList;
 
 import de.robv.android.xposed.XC_MethodHook;
-import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import jp.co.cyberagent.android.gpuimage.GPUImage;

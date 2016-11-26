@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import com.marz.snapprefs.Friend;
 import com.marz.snapprefs.GroupDialog;
-import com.marz.snapprefs.Logger;
 import com.marz.snapprefs.R;
 
 import java.util.List;

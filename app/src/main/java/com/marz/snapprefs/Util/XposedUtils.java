@@ -31,7 +31,6 @@ import de.robv.android.xposed.XposedBridge;
 import static de.robv.android.xposed.XposedHelpers.callMethod;
 import static de.robv.android.xposed.XposedHelpers.callStaticMethod;
 import static de.robv.android.xposed.XposedHelpers.findClass;
-import static de.robv.android.xposed.XposedHelpers.newInstance;
 
 /**
  * A set of commonly used utilities using the Xposed Framework.

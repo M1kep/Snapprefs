@@ -257,22 +257,23 @@ public class HookedLayouts {
                                     Logger.printMessage("Image Width x Height: " + img.getWidth() + " x " + img.getHeight(), t);
                                     Logger.printFilledRow(t);
                                 }
-                                final String userName = HookMethods.getSCUsername(HookMethods.classLoader);
-                                //final Bitmap mask = BitmapFactory.decodeResource(HookMethods.context.getResources(), HookMethods.context.getResources().getIdentifier("ghost_mask_scaled", "drawable", HookMethods.context.getPackageName()));
-                                final Bitmap mask = ((BitmapDrawable) resparam.res.getDrawable(resparam.res.getIdentifier("ghost_mask_scaled", "drawable", Common.PACKAGE_SNAP))).getBitmap();
-                                final Handler handler = new Handler(HookMethods.context.getMainLooper());
-                                handler.postDelayed(new Runnable() {
-                                    int i = 0;
-                                    @Override
-                                    public void run() {
-                                        if(i < 5) {
-                                            ((AsyncTask<Void, Void, Bitmap>) newInstance(findClass("aym", HookMethods.classLoader), new Class[]{Bitmap.class, Bitmap.class, int.class, String.class}, ((BitmapDrawable) profileImgBtns[i].getDrawable()).getBitmap(), mask, i, userName)).execute();
-                                            Toast.makeText(HookMethods.SnapContext, "Image " + i + " uploaded!... I think..", Toast.LENGTH_SHORT).show();
-                                            i++;
-                                            handler.postDelayed(this, 1000);
-                                        }
-                                    }
-                                }, 1000);
+
+//                                final String userName = HookMethods.getSCUsername(HookMethods.classLoader);
+//                                //final Bitmap mask = BitmapFactory.decodeResource(HookMethods.context.getResources(), HookMethods.context.getResources().getIdentifier("ghost_mask_scaled", "drawable", HookMethods.context.getPackageName()));
+//                                final Bitmap mask = ((BitmapDrawable) resparam.res.getDrawable(resparam.res.getIdentifier("ghost_mask_scaled", "drawable", Common.PACKAGE_SNAP))).getBitmap();
+//                                final Handler handler = new Handler(HookMethods.context.getMainLooper());
+//                                handler.postDelayed(new Runnable() {
+//                                    int i = 0;
+//                                    @Override
+//                                    public void run() {
+//                                        if(i < 5) {
+//                                            ((AsyncTask<Void, Void, Bitmap>) newInstance(findClass("aym", HookMethods.classLoader), new Class[]{Bitmap.class, Bitmap.class, int.class, String.class}, ((BitmapDrawable) profileImgBtns[i].getDrawable()).getBitmap(), mask, i, userName)).execute();
+//                                            Toast.makeText(HookMethods.SnapContext, "Image " + i + " uploaded!... I think..", Toast.LENGTH_SHORT).show();
+//                                            i++;
+//                                            handler.postDelayed(this, 1000);
+//                                        }
+//                                    }
+//                                }, 1000);
                             }
                         });
                         AlertDialog dialog = dialogBuilder.create();

@@ -58,6 +58,7 @@ import static de.robv.android.xposed.XposedHelpers.callMethod;
 import static de.robv.android.xposed.XposedHelpers.callStaticMethod;
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 import static de.robv.android.xposed.XposedHelpers.findClass;
+import static de.robv.android.xposed.XposedHelpers.getIntField;
 import static de.robv.android.xposed.XposedHelpers.getObjectField;
 import static de.robv.android.xposed.XposedHelpers.getStaticObjectField;
 import static de.robv.android.xposed.XposedHelpers.setObjectField;
@@ -462,7 +463,16 @@ public class HookMethods
 //                                    Logger.printFilledRow(LogType.DEBUG);
 //                                }
 //                            });
-
+                            XposedHelpers.findAndHookMethod("com.snapchat.android.fragments.addfriends.ProfileFragment$d", lpparam.classLoader, "a", XposedHelpers.findClass("android.graphics.Bitmap", lpparam.classLoader), XposedHelpers.findClass("com.snapchat.android.camera.TakePhotoCallback$TAKE_PHOTO_METHOD", lpparam.classLoader), new XC_MethodHook() {
+                                @Override
+                                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                                    super.beforeHookedMethod(param);
+                                    Logger.printTitle("What I think is the profile image uploader.", LogType.DEBUG);
+                                    Logger.printMessage("What I think to be the pic number(Method 1): " + getObjectField(param.thisObject, "C"), LogType.DEBUG);
+                                    Logger.printMessage("What I think to be the pic number(Method 2): " + getIntField(param.thisObject, "C"), LogType.DEBUG);
+                                    Logger.printFilledRow(LogType.DEBUG);
+                                }
+                            });
                             XposedHelpers.findAndHookMethod("com.snapchat.android.LandingPageActivity", lpparam.classLoader, "onActivityResult", int.class, int.class, XposedHelpers.findClass("android.content.Intent", lpparam.classLoader), new XC_MethodHook() {
                                 @Override
                                 protected void beforeHookedMethod(MethodHookParam param) throws Throwable {

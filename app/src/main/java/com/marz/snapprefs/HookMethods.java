@@ -439,29 +439,29 @@ public class HookMethods
                                 Premium.initPremium(lpparam);
                             }
 
-                            hookAllConstructors(findClass("aym", lpparam.classLoader), new XC_MethodHook() {
-                                @Override
-                                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                                    super.beforeHookedMethod(param);
-                                    int x = 0;
-                                    Logger.printTitle("Printing Args and Bmp info for aym constructor with " + param.args.length + " parameters!", LogType.DEBUG);
-                                    Bitmap bmp1 = (Bitmap) param.args[0];
-                                    Bitmap bmp2 = (Bitmap) param.args[1];
-                                    Logger.printMessage("BitMap 1 height x width: " + bmp1.getHeight() + " x " + bmp1.getWidth(), LogType.DEBUG);
-                                    Logger.printMessage("BitMap 2 height x width: " + bmp2.getHeight() + " x " + bmp2.getWidth(), LogType.DEBUG);
-                                    for(Object o : param.args) {
-                                        int y = x++;
-                                        Logger.printFilledRow(LogType.DEBUG);
-                                        Logger.printMessage("Parameter " + y + " object: " + o, LogType.DEBUG);
-                                        Logger.printMessage("Parameter " + y + " class: " + o.getClass(), LogType.DEBUG);
-                                        Logger.printMessage("Parameter " + y + " Canonical Name: " + o.getClass().getCanonicalName(), LogType.DEBUG);
-                                        Logger.printMessage("Parameter " + y + " Simple Name: " + o.getClass().getSimpleName(), LogType.DEBUG);
-                                        Logger.printMessage("Parameter " + y + " Name: " + o.getClass().getName(), LogType.DEBUG);
-
-                                    }
-                                    Logger.printFilledRow(LogType.DEBUG);
-                                }
-                            });
+//                            hookAllConstructors(findClass("aym", lpparam.classLoader), new XC_MethodHook() {
+//                                @Override
+//                                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+//                                    super.beforeHookedMethod(param);
+//                                    int x = 0;
+//                                    Logger.printTitle("Printing Args and Bmp info for aym constructor with " + param.args.length + " parameters!", LogType.DEBUG);
+//                                    Bitmap bmp1 = (Bitmap) param.args[0];
+//                                    Bitmap bmp2 = (Bitmap) param.args[1];
+//                                    Logger.printMessage("BitMap 1 height x width: " + bmp1.getHeight() + " x " + bmp1.getWidth(), LogType.DEBUG);
+//                                    Logger.printMessage("BitMap 2 height x width: " + bmp2.getHeight() + " x " + bmp2.getWidth(), LogType.DEBUG);
+//                                    for(Object o : param.args) {
+//                                        int y = x++;
+//                                        Logger.printFilledRow(LogType.DEBUG);
+//                                        Logger.printMessage("Parameter " + y + " object: " + o, LogType.DEBUG);
+//                                        Logger.printMessage("Parameter " + y + " class: " + o.getClass(), LogType.DEBUG);
+//                                        Logger.printMessage("Parameter " + y + " Canonical Name: " + o.getClass().getCanonicalName(), LogType.DEBUG);
+//                                        Logger.printMessage("Parameter " + y + " Simple Name: " + o.getClass().getSimpleName(), LogType.DEBUG);
+//                                        Logger.printMessage("Parameter " + y + " Name: " + o.getClass().getName(), LogType.DEBUG);
+//
+//                                    }
+//                                    Logger.printFilledRow(LogType.DEBUG);
+//                                }
+//                            });
 
                             XposedHelpers.findAndHookMethod("com.snapchat.android.LandingPageActivity", lpparam.classLoader, "onActivityResult", int.class, int.class, XposedHelpers.findClass("android.content.Intent", lpparam.classLoader), new XC_MethodHook() {
                                 @Override

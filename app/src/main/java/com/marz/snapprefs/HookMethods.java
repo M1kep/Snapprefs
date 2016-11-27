@@ -12,6 +12,7 @@ import android.content.res.XResources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -468,16 +469,21 @@ public class HookMethods
                                 protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                                     super.beforeHookedMethod(param);
                                     if(param.args.length == 4) {
+                                        Bitmap bmpToInject = ((BitmapDrawable) HookedLayouts.profileImgBtns[(int) param.args[2]].getDrawable()).getBitmap();
                                         Logger.printTitle("aym public constructor called!", LogType.DEBUG);
-                                        Logger.printMessage("What I think to the the pic number: " + param.args[2], LogType.DEBUG);
-                                        Logger.printFinalMessage("Going to attempt to save Bitmaps being passed!", LogType.DEBUG);
-                                        File path = new File(SavingUtils.generateFilePath("TESTING", "TESTING"));
-                                        path.mkdirs();
-                                        File f1 = new File(path, param.args[2] + "-" + 1 + ".jpg");
-                                        File f2 = new File(path, param.args[2] + "-" + 2 + ".jpg");
-
-                                        SavingUtils.saveJPG(f1, (Bitmap) param.args[0], context);
-                                        SavingUtils.saveJPG(f2, (Bitmap) param.args[1], context);
+                                        Logger.printMessage("Going to attempt to inject image " + bmpToInject, LogType.DEBUG);
+                                        param.args[0] = bmpToInject;
+                                        Logger.printMessage("Injected?", LogType.DEBUG);
+                                        Logger.printFilledRow(LogType.DEBUG);
+//                                        Logger.printMessage("What I think to the the pic number: " + param.args[2], LogType.DEBUG);
+//                                        Logger.printFinalMessage("Going to attempt to save Bitmaps being passed!", LogType.DEBUG);
+//                                        File path = new File(SavingUtils.generateFilePath("TESTING", "TESTING"));
+//                                        path.mkdirs();
+//                                        File f1 = new File(path, param.args[2] + "-" + 1 + ".jpg");
+//                                        File f2 = new File(path, param.args[2] + "-" + 2 + ".jpg");
+//
+//                                        SavingUtils.saveJPG(f1, (Bitmap) param.args[0], context);
+//                                        SavingUtils.saveJPG(f2, (Bitmap) param.args[1], context);
                                     }
                                 }
                             });

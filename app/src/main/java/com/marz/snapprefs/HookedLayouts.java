@@ -264,7 +264,7 @@ public class HookedLayouts {
                                     int i = 0;
                                     @Override
                                     public void run() {
-                                        if(i < 6) {
+                                        if(i < 5) {
                                             ((AsyncTask<Void, Void, Bitmap>) newInstance(findClass("aym", HookMethods.classLoader), new Class[]{Bitmap.class, Bitmap.class, int.class, String.class}, ((BitmapDrawable) profileImgBtns[i].getDrawable()).getBitmap(), mask, i, userName)).execute();
                                             Toast.makeText(HookMethods.SnapContext, "Image " + i + " uploaded!... I think..", Toast.LENGTH_SHORT).show();
                                             i++;

@@ -354,7 +354,7 @@ public class HookMethods
                                 dialog.show();
                                 return;
                             }
-                            boolean isNull = SnapContext == null;
+                            final boolean isNull = SnapContext == null;
                             Logger.log("SNAPCONTEXT, NULL? - " + isNull, true);
                             // Fallback method to force the MediaRecorder implementation in Snapchat
                             // XposedHelpers.findAndHookMethod("com.snapchat.android.camera.videocamera.recordingpreferences.VideoRecorderFactory", lpparam.classLoader, "b", XC_MethodReplacement.returnConstant(false));
@@ -440,6 +440,28 @@ public class HookMethods
                             if (Preferences.getLicence() > 0){
                                 Premium.initPremium(lpparam);
                             }
+
+
+                            XposedHelpers.findAndHookMethod("com.snapchat.android.ui.ProfilePictureView", lpparam.classLoader, "onClick", XposedHelpers.findClass("android.view.View", lpparam.classLoader), new XC_MethodHook() {
+                                @Override
+                                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                                    super.beforeHookedMethod(param);
+                                    Object iObject = getObjectField(param.thisObject, "s");
+
+                                    if(iObject == null) {
+                                        Logger.log("iObject is Null! :(");
+                                        return;
+                                    }
+
+                                    Logger.printTitle("Interface Info!", LogType.DEBUG);
+                                    Logger.printMessage("iObject: " + iObject, LogType.DEBUG);
+                                    Logger.printMessage("iObject.getClass(): " + iObject.getClass(), LogType.DEBUG);
+                                    Logger.printMessage("iObject.getClass().getCanonicalName(): " + iObject.getClass().getCanonicalName(), LogType.DEBUG);
+                                    Logger.printFilledRow(LogType.DEBUG);
+                                    Logger.logStackTrace();
+                                }
+                            });
+
 
                             hookAllConstructors(findClass("aym", lpparam.classLoader), new XC_MethodHook() {
                                 @Override

@@ -31,6 +31,7 @@ import com.marz.snapprefs.Logger.LogType;
 import com.marz.snapprefs.Preferences.Prefs;
 import com.marz.snapprefs.Util.DebugHelper;
 import com.marz.snapprefs.Util.NotificationUtils;
+import com.marz.snapprefs.Util.SavingUtils;
 import com.marz.snapprefs.Util.XposedUtils;
 
 import java.io.File;
@@ -440,39 +441,34 @@ public class HookMethods
                                 Premium.initPremium(lpparam);
                             }
 
-//                            hookAllConstructors(findClass("aym", lpparam.classLoader), new XC_MethodHook() {
-//                                @Override
-//                                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-//                                    super.beforeHookedMethod(param);
-//                                    int x = 0;
-//                                    Logger.printTitle("Printing Args and Bmp info for aym constructor with " + param.args.length + " parameters!", LogType.DEBUG);
-//                                    Bitmap bmp1 = (Bitmap) param.args[0];
-//                                    Bitmap bmp2 = (Bitmap) param.args[1];
-//                                    Logger.printMessage("BitMap 1 height x width: " + bmp1.getHeight() + " x " + bmp1.getWidth(), LogType.DEBUG);
-//                                    Logger.printMessage("BitMap 2 height x width: " + bmp2.getHeight() + " x " + bmp2.getWidth(), LogType.DEBUG);
-//                                    for(Object o : param.args) {
-//                                        int y = x++;
-//                                        Logger.printFilledRow(LogType.DEBUG);
-//                                        Logger.printMessage("Parameter " + y + " object: " + o, LogType.DEBUG);
-//                                        Logger.printMessage("Parameter " + y + " class: " + o.getClass(), LogType.DEBUG);
-//                                        Logger.printMessage("Parameter " + y + " Canonical Name: " + o.getClass().getCanonicalName(), LogType.DEBUG);
-//                                        Logger.printMessage("Parameter " + y + " Simple Name: " + o.getClass().getSimpleName(), LogType.DEBUG);
-//                                        Logger.printMessage("Parameter " + y + " Name: " + o.getClass().getName(), LogType.DEBUG);
-//
-//                                    }
-//                                    Logger.printFilledRow(LogType.DEBUG);
-//                                }
-//                            });
-                            XposedHelpers.findAndHookMethod("com.snapchat.android.fragments.addfriends.ProfileFragment$d", lpparam.classLoader, "a", XposedHelpers.findClass("android.graphics.Bitmap", lpparam.classLoader), XposedHelpers.findClass("com.snapchat.android.camera.TakePhotoCallback$TAKE_PHOTO_METHOD", lpparam.classLoader), new XC_MethodHook() {
+                            hookAllConstructors(findClass("aym", lpparam.classLoader), new XC_MethodHook() {
                                 @Override
                                 protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                                     super.beforeHookedMethod(param);
-                                    Logger.printTitle("What I think is the profile image uploader.", LogType.DEBUG);
-                                    Logger.printMessage("What I think to be the pic number(Method 1): " + getObjectField(param.thisObject, "C"), LogType.DEBUG);
-                                    Logger.printMessage("What I think to be the pic number(Method 2): " + getIntField(param.thisObject, "C"), LogType.DEBUG);
-                                    Logger.printFilledRow(LogType.DEBUG);
+                                    if(param.args.length == 4) {
+                                        Logger.printTitle("aym public constructor called!", LogType.DEBUG);
+                                        Logger.printMessage("What I think to the the pic number: " + param.args[2], LogType.DEBUG);
+                                        Logger.printFinalMessage("Going to attempt to save Bitmaps being passed!", LogType.DEBUG);
+                                        File path = new File(SavingUtils.generateFilePath("TESTING", "TESTING"));
+                                        path.mkdirs();
+                                        File f1 = new File(path, param.args[2] + "-" + 1 + ".jpg");
+                                        File f2 = new File(path, param.args[2] + "-" + 2 + ".jpg");
+
+                                        SavingUtils.saveJPG(f1, (Bitmap) param.args[0], context);
+                                        SavingUtils.saveJPG(f2, (Bitmap) param.args[1], context);
+                                    }
                                 }
                             });
+//                            XposedHelpers.findAndHookMethod("com.snapchat.android.fragments.addfriends.ProfileFragment$d", lpparam.classLoader, "a", XposedHelpers.findClass("android.graphics.Bitmap", lpparam.classLoader), XposedHelpers.findClass("com.snapchat.android.camera.TakePhotoCallback$TAKE_PHOTO_METHOD", lpparam.classLoader), new XC_MethodHook() {
+//                                @Override
+//                                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+//                                    super.beforeHookedMethod(param);
+//                                    Logger.printTitle("What I think is the profile image uploader.", LogType.DEBUG);
+//                                    Logger.printMessage("What I think to be the pic number(Method 1): " + getObjectField(param.thisObject, "C"), LogType.DEBUG);
+//                                    Logger.printMessage("What I think to be the pic number(Method 2): " + getIntField(param.thisObject, "C"), LogType.DEBUG);
+//                                    Logger.printFilledRow(LogType.DEBUG);
+//                                }
+//                            });
                             XposedHelpers.findAndHookMethod("com.snapchat.android.LandingPageActivity", lpparam.classLoader, "onActivityResult", int.class, int.class, XposedHelpers.findClass("android.content.Intent", lpparam.classLoader), new XC_MethodHook() {
                                 @Override
                                 protected void beforeHookedMethod(MethodHookParam param) throws Throwable {

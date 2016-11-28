@@ -506,11 +506,17 @@ public class HookMethods
                                             }
                                             Logger.printTitle("ProfileFragement$d Method \"a\" Hook", LogType.DEBUG);
                                             Logger.printMessage("Image #?: " + photoNum, LogType.DEBUG);
-                                            File path = new File(SavingUtils.generateFilePath("TESTING", "TESTING"));
-                                            Logger.printMessage(String.format("Found image [w:%s][h:%s]", image.getWidth(), image.getHeight()), LogType.DEBUG);
-                                            Logger.printMessage("Attempting to save photo!", LogType.DEBUG);
-                                            File f1 = new File(path, photoNum + ".jpg");
-                                            SavingUtils.saveJPG(f1, image, context);
+                                            Logger.printMessage("param.args[0] bitmap before inject: " + param.args[0], LogType.DEBUG);
+                                            Logger.printMessage("Bitmap to inject: " + HookedLayouts.profileImgBtns[photoNum], LogType.DEBUG);
+                                            Logger.printMessage("Injecting Image " + photoNum + "!", LogType.DEBUG);
+                                            param.args[0] = HookedLayouts.profileImgBtns[photoNum];
+                                            Logger.printMessage("Injected! :D", LogType.DEBUG);
+                                            Logger.printFinalMessage("param.args[0] bitmap after inject: " + param.args[0], LogType.DEBUG);
+//                                            File path = new File(SavingUtils.generateFilePath("TESTING", "TESTING"));
+//                                            Logger.printMessage(String.format("Found image [w:%s][h:%s]", image.getWidth(), image.getHeight()), LogType.DEBUG);
+//                                            Logger.printMessage("Attempting to save photo!", LogType.DEBUG);
+//                                            File f1 = new File(path, photoNum + ".jpg");
+//                                            SavingUtils.saveJPG(f1, image, context);
                                             Logger.logStackTrace();
                                         }
                                     });

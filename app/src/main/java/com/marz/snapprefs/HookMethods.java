@@ -86,7 +86,7 @@ public class HookMethods
     Class CaptionEditText;
     boolean latest = false;
     private static int photoNum = 0;
-
+    private static int switcher = 0;
     public static int px(float f) {
         return Math.round((f * SnapContext.getResources().getDisplayMetrics().density));
     }
@@ -443,83 +443,107 @@ public class HookMethods
                                 Premium.initPremium(lpparam);
                             }
 
-
-                            XposedHelpers.findAndHookMethod("com.snapchat.android.ui.ProfilePictureView", lpparam.classLoader, "onClick", XposedHelpers.findClass("android.view.View", lpparam.classLoader), new XC_MethodHook() {
-                                @Override
-                                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                                    super.beforeHookedMethod(param);
-                                    Object iObject = getObjectField(param.thisObject, "s");
-
-                                    if(iObject == null) {
-                                        Logger.log("iObject is Null! :(");
-                                        return;
-                                    }
-
-                                    Logger.printTitle("Interface Info!", LogType.DEBUG);
-                                    Logger.printMessage("iObject: " + iObject, LogType.DEBUG);
-                                    Logger.printMessage("iObject.getClass(): " + iObject.getClass(), LogType.DEBUG);
-                                    Logger.printMessage("iObject.getClass().getCanonicalName(): " + iObject.getClass().getCanonicalName(), LogType.DEBUG);
-                                    Logger.printFilledRow(LogType.DEBUG);
-                                    Logger.logStackTrace();
-                                }
-                            });
-
-
-                            hookAllConstructors(findClass("aym", lpparam.classLoader), new XC_MethodHook() {
-                                @Override
-                                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                                    super.beforeHookedMethod(param);
-                                    if(param.args.length == 4) {
-//                                        Bitmap bmpToInject = ((BitmapDrawable) HookedLayouts.profileImgBtns[(int) param.args[2]].getDrawable()).getBitmap();
-                                        Logger.printTitle("aym public constructor called!", LogType.DEBUG);
-//                                        Logger.printMessage("Going to attempt to inject image " + bmpToInject, LogType.DEBUG);
-//                                        param.args[0] = bmpToInject;
-//                                        Logger.printMessage("Injected?", LogType.DEBUG);
-//                                        Logger.printFilledRow(LogType.DEBUG);
-                                        Logger.printMessage("What I think to the the pic number: " + param.args[2], LogType.DEBUG);
-                                        Bitmap bmpIn = (Bitmap) param.args[0];
-                                        Logger.printMessage("Width x Height of Input BMP: " + bmpIn.getWidth() + " x " + bmpIn.getHeight(), LogType.DEBUG);
-                                        Logger.printFilledRow(LogType.DEBUG);
-//                                        Logger.printFinalMessage("Going to attempt to save Bitmaps being passed!", LogType.DEBUG);
-//                                        File path = new File(SavingUtils.generateFilePath("TESTING", "TESTING"));
-//                                        path.mkdirs();
-//                                        File f1 = new File(path, param.args[2] + "-" + 1 + ".jpg");
-//                                        File f2 = new File(path, param.args[2] + "-" + 2 + ".jpg");
-//
-//                                        SavingUtils.saveJPG(f1, (Bitmap) param.args[0], context);
-//                                        SavingUtils.saveJPG(f2, (Bitmap) param.args[1], context);
-                                    }
-                                }
-                            });
                             Class TAKE_PHOTO_METHOD = findClass("com.snapchat.android.camera.TakePhotoCallback.TAKE_PHOTO_METHOD", lpparam.classLoader);
                             findAndHookMethod("com.snapchat.android.fragments.addfriends.ProfileFragment$d", lpparam.classLoader, "a",
                                     Bitmap.class, TAKE_PHOTO_METHOD, new XC_MethodHook() {
                                         @Override
                                         protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                                             super.beforeHookedMethod(param);
-                                            int photoNum = getPhotoNum();
                                             Bitmap image = (Bitmap) param.args[0];
 
                                             if(image == null) {
                                                 Logger.log("Null Profile Image");
                                                 return;
                                             }
-                                            Logger.printTitle("ProfileFragement$d Method \"a\" Hook", LogType.DEBUG);
-                                            Logger.printMessage("Image #?: " + photoNum, LogType.DEBUG);
-                                            Logger.printMessage("param.args[0] bitmap before inject: " + param.args[0], LogType.DEBUG);
-                                            Logger.printMessage("Bitmap to inject: " + HookedLayouts.profileImgBtns[photoNum], LogType.DEBUG);
-                                            Logger.printMessage("Injecting Image " + photoNum + "!", LogType.DEBUG);
-                                            param.args[0] = ((BitmapDrawable) HookedLayouts.profileImgBtns[photoNum].getDrawable()).getBitmap();
-                                            Logger.printMessage("Injected! :D", LogType.DEBUG);
-                                            Logger.printFinalMessage("param.args[0] bitmap after inject: " + param.args[0], LogType.DEBUG);
+                                            Logger.log("PhotoNum: " + getPhotoNum());
+                                            Logger.printTitle("Bitmap Input Info");
+                                            Logger.printMessage("Bitmap Object: " + image);
+                                            Logger.printMessage("Bitmap Height: " + image.getHeight());
+                                            Logger.printMessage("Bitmap Width: " + image.getWidth());
+                                            Logger.printFilledRow();
+                                        }
+                                    });
+
+//                            XposedHelpers.findAndHookMethod("com.snapchat.android.ui.ProfilePictureView", lpparam.classLoader, "onClick", XposedHelpers.findClass("android.view.View", lpparam.classLoader), new XC_MethodHook() {
+//                                @Override
+//                                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+//                                    super.beforeHookedMethod(param);
+//                                    Object iObject = getObjectField(param.thisObject, "s");
+//
+//                                    if(iObject == null) {
+//                                        Logger.log("iObject is Null! :(");
+//                                        return;
+//                                    }
+//
+//                                    Logger.printTitle("Interface Info!", LogType.DEBUG);
+//                                    Logger.printMessage("iObject: " + iObject, LogType.DEBUG);
+//                                    Logger.printMessage("iObject.getClass(): " + iObject.getClass(), LogType.DEBUG);
+//                                    Logger.printMessage("iObject.getClass().getCanonicalName(): " + iObject.getClass().getCanonicalName(), LogType.DEBUG);
+//                                    Logger.printFilledRow(LogType.DEBUG);
+//                                    Logger.logStackTrace();
+//                                }
+//                            });
+
+
+//                            hookAllConstructors(findClass("aym", lpparam.classLoader), new XC_MethodHook() {
+//                                @Override
+//                                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+//                                    super.beforeHookedMethod(param);
+//                                    if(param.args.length == 4) {
+////                                        Bitmap bmpToInject = ((BitmapDrawable) HookedLayouts.profileImgBtns[(int) param.args[2]].getDrawable()).getBitmap();
+//                                        Logger.printTitle("aym public constructor called!", LogType.DEBUG);
+////                                        Logger.printMessage("Going to attempt to inject image " + bmpToInject, LogType.DEBUG);
+////                                        param.args[0] = bmpToInject;
+////                                        Logger.printMessage("Injected?", LogType.DEBUG);
+////                                        Logger.printFilledRow(LogType.DEBUG);
+//                                        Logger.printMessage("What I think to the the pic number: " + param.args[2], LogType.DEBUG);
+//                                        Bitmap bmpIn = (Bitmap) param.args[0];
+//                                        Logger.printMessage("Width x Height of Input BMP: " + bmpIn.getWidth() + " x " + bmpIn.getHeight(), LogType.DEBUG);
+//                                        Logger.printFilledRow(LogType.DEBUG);
+////                                        Logger.printFinalMessage("Going to attempt to save Bitmaps being passed!", LogType.DEBUG);
+////                                        File path = new File(SavingUtils.generateFilePath("TESTING", "TESTING"));
+////                                        path.mkdirs();
+////                                        File f1 = new File(path, param.args[2] + "-" + 1 + ".jpg");
+////                                        File f2 = new File(path, param.args[2] + "-" + 2 + ".jpg");
+////
+////                                        SavingUtils.saveJPG(f1, (Bitmap) param.args[0], context);
+////                                        SavingUtils.saveJPG(f2, (Bitmap) param.args[1], context);
+//                                    }
+//                                }
+//                            });
+//                            Class TAKE_PHOTO_METHOD = findClass("com.snapchat.android.camera.TakePhotoCallback.TAKE_PHOTO_METHOD", lpparam.classLoader);
+//                            findAndHookMethod("com.snapchat.android.fragments.addfriends.ProfileFragment$d", lpparam.classLoader, "a",
+//                                    Bitmap.class, TAKE_PHOTO_METHOD, new XC_MethodHook() {
+//                                        @Override
+//                                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+//                                            super.beforeHookedMethod(param);
+//                                            int photoNum = getPhotoNum();
+//                                            int switcher = getSwitcher();
+//                                            Bitmap image = (Bitmap) param.args[0];
+//                                            Bitmap imageToInject = ((BitmapDrawable) HookedLayouts.profileImgBtns[photoNum].getDrawable()).getBitmap();
+//                                            if(image == null) {
+//                                                Logger.log("Null Profile Image");
+//                                                return;
+//                                            }
+//                                            Logger.printTitle("ProfileFragement$d Method \"a\" Hook", LogType.DEBUG);
+//                                            Logger.printMessage("Image #?: " + photoNum, LogType.DEBUG);
+//                                            Logger.printFinalMessage("Switcher #?: " + switcher, LogType.DEBUG);
+//                                            Logger.printMessage("param.args[0] bitmap before inject: " + param.args[0], LogType.DEBUG);
+//                                            Logger.printMessage("Bitmap to inject: " + HookedLayouts.profileImgBtns[photoNum], LogType.DEBUG);
+//                                            Logger.printMessage("Injecting Image " + photoNum + "!", LogType.DEBUG);
+//                                            param.args[0] = ((BitmapDrawable) HookedLayouts.profileImgBtns[photoNum].getDrawable()).getBitmap();
+//                                            Logger.printMessage("Injected! :D", LogType.DEBUG);
+//                                            Logger.printFinalMessage("param.args[0] bitmap after inject: " + param.args[0], LogType.DEBUG);
+
 //                                            File path = new File(SavingUtils.generateFilePath("TESTING", "TESTING"));
 //                                            Logger.printMessage(String.format("Found image [w:%s][h:%s]", image.getWidth(), image.getHeight()), LogType.DEBUG);
 //                                            Logger.printMessage("Attempting to save photo!", LogType.DEBUG);
 //                                            File f1 = new File(path, photoNum + ".jpg");
 //                                            SavingUtils.saveJPG(f1, image, context);
-                                            Logger.logStackTrace();
-                                        }
-                                    });
+//                                            Logger.logStackTrace();
+//                                        }
+//                                    });                                        }
+//                                    });
 //                            XposedHelpers.findAndHookMethod("com.snapchat.android.fragments.addfriends.ProfileFragment$d", lpparam.classLoader, "a", XposedHelpers.findClass("android.graphics.Bitmap", lpparam.classLoader), XposedHelpers.findClass("com.snapchat.android.camera.TakePhotoCallback$TAKE_PHOTO_METHOD", lpparam.classLoader), new XC_MethodHook() {
 //                                @Override
 //                                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
@@ -1010,5 +1034,9 @@ public class HookMethods
 
     private int getPhotoNum() {
         return photoNum++ % 5;
+    }
+
+    private int getSwitcher() {
+        return switcher++ % 2;
     }
 }

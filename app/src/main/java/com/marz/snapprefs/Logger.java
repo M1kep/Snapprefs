@@ -99,12 +99,29 @@ public class Logger {
     }
 
     /**
+     * Prints a title in a line width of at least {@link #printWidth} with areas before and after filled with '#'s using the log type of DEBUG
+     *
+     * @param message The message to print in the title
+     */
+    public static void printTitle(String message) {
+        printFinalMessage(message, LogType.DEBUG);
+    }
+    /**
      * Prints a message with left and right aligned '#'s, to be used with {@link #printTitle(String, LogType)} and {@link #printFilledRow(LogType)}
      *
      * @param message The message to print between the '#'s
      */
     public static void printMessage(String message, LogType logType) {
         log("#" + StringUtils.center(message, printWidth) + "#", logType.removeTag());
+    }
+
+    /**
+     * Prints a message with left and right aligned '#'s using the {@link LogType#DEBUG}, to be used with {@link #printTitle(String)} and {@link #printFilledRow()}}
+     *
+     * @param message The message to print between the '#'s
+     */
+    public static void printMessage(String message) {
+        printMessage(message, LogType.DEBUG);
     }
 
     /**
@@ -119,10 +136,19 @@ public class Logger {
     }
 
     /**
-     * Print a '#' Filled row of width {@link #printWidth}
+     * Print a '#' Filled row of width {@link #printWidth} using the specified {@link LogType}
+     *
+     * @param logType The log type to be used when performing the logging.
      */
     static void printFilledRow(LogType logType) {
         log(StringUtils.repeat("#", printWidth + 2), logType.removeTag());
+    }
+
+    /**
+     * Print a '#' Filled row of width {@link #printWidth} using the {@link LogType#DEBUG} {@link LogType}.
+     */
+    static void printFilledRow() {
+        printFilledRow(LogType.DEBUG);
     }
 
     /**
@@ -182,6 +208,7 @@ public class Logger {
         log(message, logType.setForced());
         log(throwable);
     }
+
 
     public static void log(String message) {
         log(message, LogType.DEBUG);

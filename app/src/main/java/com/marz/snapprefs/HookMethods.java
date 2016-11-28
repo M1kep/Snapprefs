@@ -471,11 +471,14 @@ public class HookMethods
                                     if(param.args.length == 4) {
                                         Bitmap bmpToInject = ((BitmapDrawable) HookedLayouts.profileImgBtns[(int) param.args[2]].getDrawable()).getBitmap();
                                         Logger.printTitle("aym public constructor called!", LogType.DEBUG);
-                                        Logger.printMessage("Going to attempt to inject image " + bmpToInject, LogType.DEBUG);
-                                        param.args[0] = bmpToInject;
-                                        Logger.printMessage("Injected?", LogType.DEBUG);
+//                                        Logger.printMessage("Going to attempt to inject image " + bmpToInject, LogType.DEBUG);
+//                                        param.args[0] = bmpToInject;
+//                                        Logger.printMessage("Injected?", LogType.DEBUG);
+//                                        Logger.printFilledRow(LogType.DEBUG);
+                                        Logger.printMessage("What I think to the the pic number: " + param.args[2], LogType.DEBUG);
+                                        Bitmap bmpIn = (Bitmap) param.args[0];
+                                        Logger.printMessage("Width x Height of Input BMP: " + bmpIn.getWidth() + " x " + bmpIn.getHeight(), LogType.DEBUG);
                                         Logger.printFilledRow(LogType.DEBUG);
-//                                        Logger.printMessage("What I think to the the pic number: " + param.args[2], LogType.DEBUG);
 //                                        Logger.printFinalMessage("Going to attempt to save Bitmaps being passed!", LogType.DEBUG);
 //                                        File path = new File(SavingUtils.generateFilePath("TESTING", "TESTING"));
 //                                        path.mkdirs();

@@ -11,6 +11,7 @@ import android.content.res.XModuleResources;
 import android.content.res.XResources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -23,6 +24,7 @@ import android.text.InputFilter;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -625,6 +627,10 @@ public class HookMethods
                                     final int resultCode = (int) param.args[1];
                                     final Intent data = (Intent) param.args[2];
                                     final Context spContext = SnapContext.createPackageContext("com.marz.snapprefs", Context.CONTEXT_IGNORE_SECURITY);
+                                    Point dispSize = new Point();
+                                    ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getSize(dispSize);
+                                    final int dispWidth = dispSize.x;
+                                    final int dispHeight = dispSize.y;
                                     if(resultCode == RESULT_OK) {
                                         File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Snapprefs/temp");
                                         dir.mkdirs();
@@ -636,7 +642,7 @@ public class HookMethods
                                                         try {
                                                             final Uri imageUri = data.getData();
                                                             final InputStream imgStream = spContext.getContentResolver().openInputStream(imageUri);
-                                                            final Bitmap chosenImg = BitmapFactory.decodeStream(imgStream);
+                                                            final Bitmap chosenImg = Bitmap.createScaledBitmap(BitmapFactory.decodeStream(imgStream), dispWidth, dispHeight, false);
                                                             HookedLayouts.profileImgBtns[0].setImageBitmap(chosenImg);
                                                         } catch (FileNotFoundException e) {
                                                             e.printStackTrace();
@@ -662,7 +668,7 @@ public class HookMethods
                                                         try {
                                                             final Uri imageUri = data.getData();
                                                             final InputStream imgStream = spContext.getContentResolver().openInputStream(imageUri);
-                                                            final Bitmap chosenImg = BitmapFactory.decodeStream(imgStream);
+                                                            final Bitmap chosenImg = Bitmap.createScaledBitmap(BitmapFactory.decodeStream(imgStream), dispWidth, dispHeight, false);
                                                             HookedLayouts.profileImgBtns[1].setImageBitmap(chosenImg);
                                                         } catch (FileNotFoundException e) {
                                                             e.printStackTrace();
@@ -677,7 +683,7 @@ public class HookMethods
                                                         try {
                                                             final Uri imageUri = data.getData();
                                                             final InputStream imgStream = spContext.getContentResolver().openInputStream(imageUri);
-                                                            final Bitmap chosenImg = BitmapFactory.decodeStream(imgStream);
+                                                            final Bitmap chosenImg = Bitmap.createScaledBitmap(BitmapFactory.decodeStream(imgStream), dispWidth, dispHeight, false);
                                                             HookedLayouts.profileImgBtns[2].setImageBitmap(chosenImg);
                                                         } catch (FileNotFoundException e) {
                                                             e.printStackTrace();
@@ -692,7 +698,7 @@ public class HookMethods
                                                         try {
                                                             final Uri imageUri = data.getData();
                                                             final InputStream imgStream = spContext.getContentResolver().openInputStream(imageUri);
-                                                            final Bitmap chosenImg = BitmapFactory.decodeStream(imgStream);
+                                                            final Bitmap chosenImg = Bitmap.createScaledBitmap(BitmapFactory.decodeStream(imgStream), dispWidth, dispHeight, false);
                                                             HookedLayouts.profileImgBtns[3].setImageBitmap(chosenImg);
                                                         } catch (FileNotFoundException e) {
                                                             e.printStackTrace();
@@ -707,7 +713,7 @@ public class HookMethods
                                                         try {
                                                             final Uri imageUri = data.getData();
                                                             final InputStream imgStream = spContext.getContentResolver().openInputStream(imageUri);
-                                                            final Bitmap chosenImg = BitmapFactory.decodeStream(imgStream);
+                                                            final Bitmap chosenImg = Bitmap.createScaledBitmap(BitmapFactory.decodeStream(imgStream), dispWidth, dispHeight, false);
                                                             HookedLayouts.profileImgBtns[4].setImageBitmap(chosenImg);
                                                         } catch (FileNotFoundException e) {
                                                             e.printStackTrace();
@@ -1094,6 +1100,7 @@ public class HookMethods
             }
         });
     }
+
 
 
     private Bitmap getPhoto(Bitmap bmp) {

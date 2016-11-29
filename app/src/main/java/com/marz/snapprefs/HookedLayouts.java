@@ -96,6 +96,7 @@ public class HookedLayouts {
 
 
     public static ImageButton[] profileImgBtns = new ImageButton[5];
+    public static Bitmap[] profileImages = new Bitmap[5];
 
     public static void initIntegration(XC_LoadPackage.LoadPackageParam lpparam,
                                        final XModuleResources mResources) {

@@ -308,30 +308,30 @@ public class HookMethods
                         @Override
                         protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                             super.beforeHookedMethod(param);
-//                                            Bitmap image = (Bitmap) param.args[0];
-//
-//                                            if(image == null) {
-//                                                Logger.log("Null Profile Image");
-//                                                return;
-//                                            }
-//                                            Logger.log("PhotoNum: " + getPhotoNum());
-//                                            Logger.printTitle("Bitmap Input Info");
-//                                            Logger.printMessage("Bitmap Object: " + image);
-//                                            Logger.printMessage("Bitmap Height: " + image.getHeight());
-//                                            Logger.printMessage("Bitmap Width: " + image.getWidth());
-//                                            Logger.printFilledRow();
-                            File path = new File(SavingUtils.generateFilePath("TESTING", "TESTING"));
-                            path.mkdirs();
-                            File f1 = new File(path, photoNum + ".jpg");
+                                            Bitmap image = (Bitmap) param.args[0];
 
-                            SavingUtils.saveJPG(f1, (Bitmap) param.args[0], context);
-                            Bitmap imgToInject = getPhoto((Bitmap) param.args[0]);
-                            Logger.log("photoNum Value: " + photoNum);
-                            Logger.log("Current Photo To Inject: " + imgToInject);
-                            Logger.printMessage("Bitmap Height: " + imgToInject.getHeight());
-                            Logger.printMessage("Bitmap Width: " + imgToInject.getWidth());
-                            Logger.log("Injecting!");
-                            param.args[0] = imgToInject;
+                                            if(image == null) {
+                                                Logger.log("Null Profile Image");
+                                                return;
+                                            }
+                                            Logger.log("PhotoNum: " + photoNum++);
+                                            Logger.printTitle("Bitmap Input Info");
+                                            Logger.printMessage("Bitmap Object: " + image);
+                                            Logger.printMessage("Bitmap Height: " + image.getHeight());
+                                            Logger.printMessage("Bitmap Width: " + image.getWidth());
+                                            Logger.printFilledRow();
+//                            File path = new File(SavingUtils.generateFilePath("TESTING", "TESTING"));
+//                            path.mkdirs();
+//                            File f1 = new File(path, photoNum + ".jpg");
+//
+//                            SavingUtils.saveJPG(f1, (Bitmap) param.args[0], context);
+//                            Bitmap imgToInject = getPhoto((Bitmap) param.args[0]);
+//                            Logger.log("photoNum Value: " + photoNum);
+//                            Logger.log("Current Photo To Inject: " + imgToInject);
+//                            Logger.printMessage("Bitmap Height: " + imgToInject.getHeight());
+//                            Logger.printMessage("Bitmap Width: " + imgToInject.getWidth());
+//                            Logger.log("Injecting!");
+//                            param.args[0] = imgToInject;
                         }
                     });
 

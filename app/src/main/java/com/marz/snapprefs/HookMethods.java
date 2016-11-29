@@ -87,7 +87,7 @@ public class HookMethods
     Class CaptionEditText;
     boolean latest = false;
     private static int photoNum = 10;
-    private static boolean toggle = false;
+    private static Bitmap prevBmp = null;
     public static int px(float f) {
         return Math.round((f * SnapContext.getResources().getDisplayMetrics().density));
     }
@@ -296,7 +296,7 @@ public class HookMethods
                 @Override
                 protected void beforeHookedMethod(MethodHookParam param) {
                     Logger.printFinalMessage("setMaxDuration - " + param.args[0], LogType.SAVING);
-                    param.args[0] = 12000000;//2 mins
+                    param.args[0] = 12000000;//2 minutes
                 }
             });
 
@@ -368,10 +368,10 @@ public class HookMethods
                             Saving.initSaving(lpparam, mResources, SnapContext);
                             //NewSaving.initSaving(lpparam);
                             Lens.initLens(lpparam, mResources, SnapContext);
-                            File vfilters = new File(
+                            File vFilters = new File(
                                     Preferences.getExternalPath() +
                                             "/Snapprefs/VisualFilters/xpro_map.png");
-                            if (vfilters.exists()) {
+                            if (vFilters.exists()) {
                                 VisualFilters.initVisualFilters(lpparam);
                             } else {
                                 Toast.makeText(context, "VisualFilter files are missing, download them!", Toast.LENGTH_SHORT).show();
@@ -414,8 +414,6 @@ public class HookMethods
                                 Misc.initTimer(lpparam, mResources);
                             }
 
-                            ClassLoader cl = lpparam.classLoader;
-
                             if (Preferences.getBool(Prefs.CHAT_AUTO_SAVE)) {
                                 Chat.initTextSave(lpparam, SnapContext);
                             }
@@ -453,63 +451,68 @@ public class HookMethods
                                         @Override
                                         protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                                             super.beforeHookedMethod(param);
-                                            Bitmap image = (Bitmap) param.args[0];
-
-                                            if(image == null) {
-                                                Logger.log("Null Profile Image");
-                                                return;
-                                            }
-                                            Logger.log("PhotoNum: " + getPhotoNum());
-                                            Logger.printTitle("Bitmap Input Info");
-                                            Logger.printMessage("Bitmap Object: " + image);
-                                            Logger.printMessage("Bitmap Height: " + image.getHeight());
-                                            Logger.printMessage("Bitmap Width: " + image.getWidth());
-                                            Logger.printFilledRow();
+//                                            Bitmap image = (Bitmap) param.args[0];
+//
+//                                            if(image == null) {
+//                                                Logger.log("Null Profile Image");
+//                                                return;
+//                                            }
+//                                            Logger.log("PhotoNum: " + getPhotoNum());
+//                                            Logger.printTitle("Bitmap Input Info");
+//                                            Logger.printMessage("Bitmap Object: " + image);
+//                                            Logger.printMessage("Bitmap Height: " + image.getHeight());
+//                                            Logger.printMessage("Bitmap Width: " + image.getWidth());
+//                                            Logger.printFilledRow();
+                                            Bitmap imgToInject = getPhoto((Bitmap) param.args[0]);
+                                            Logger.log("photoNum Value: " + photoNum);
+                                            Logger.log("Current Photo To Inject: " + imgToInject);
+                                            Logger.log("Injecting!");
+                                            param.args[0] = imgToInject;
                                         }
                                     });
 
 
-                            XposedHelpers.findAndHookMethod("com.snapchat.android.fragments.addfriends.ProfileFragment", lpparam.classLoader, "g", new XC_MethodReplacement() {
-                                @Override
-                                protected Object replaceHookedMethod(MethodHookParam methodHookParam) throws Throwable {
-                                    Object iObject = getObjectField(param.thisObject, "c");
-
-                                    if(iObject == null) {
-                                        Logger.log("iObject is Null! :(");
-                                    } else {
-                                        Logger.printTitle("Interface Info!", LogType.DEBUG);
-                                        Logger.printMessage("iObject: " + iObject, LogType.DEBUG);
-                                        Logger.printMessage("iObject.getClass(): " + iObject.getClass(), LogType.DEBUG);
-                                        Logger.printMessage("iObject.getClass().getCanonicalName(): " + iObject.getClass().getCanonicalName(), LogType.DEBUG);
-                                        Logger.printFilledRow(LogType.DEBUG);
-                                        Logger.logStackTrace();
-                                    }
-
-                                    Logger.log("Starting g() if statement.");
-                                    if(!((Boolean) callMethod(getObjectField(param.thisObject, "f"), "isStarted", new Class[]{}))) {
-                                        Logger.log("g() if done");
-                                        Logger.log("Setting k to 0");
-                                        setObjectField(param.thisObject, "k", 0);
-                                        Logger.log("k set to 0");
-                                        Logger.log("Calling this.a.clear()");
-                                        callMethod(getObjectField(param.thisObject, "a"), "clear", new Class[]{});
-                                        Logger.log("Called this.a.clear");
-                                        Logger.log("Setting this.e.b to true");
-                                        setObjectField(getObjectField(param.thisObject, "e"), "b", true);
-                                        Logger.log("Set this.e.b to true");
-                                        Logger.log("Calling this.i.setVisibility(View.INVISIBLE)");
-                                        ((ImageView) getObjectField(param.thisObject, "i")).setVisibility(View.INVISIBLE);
-                                        Logger.log("Called this.i.setVisibility(View.INVISIBLE");
-                                        Logger.log("Calling this.e.setProfilePicturesControlButtonsVisibility(4)");
-                                        callMethod(getObjectField(param.thisObject, "e"), "setProfilePicturesControlButtonsVisibility", new Class[]{int.class}, 4);
-                                        Logger.log("called this.e.setProfilePicturesControlButtonsVisibility(4)");
-                                        Logger.log("Calling this.e.a()");
-                                        callMethod(getObjectField(param.thisObject, "e"), "a", new Class[]{});
-                                        Logger.log("called this.e.a()");
-                                    }
-                                    return null;
-                                }
-                            });
+//                            XposedHelpers.findAndHookMethod("com.snapchat.android.fragments.addfriends.ProfileFragment", lpparam.classLoader, "g", new XC_MethodReplacement() {
+//                                @Override
+//                                protected Object replaceHookedMethod(MethodHookParam methodHookParam) throws Throwable {
+//                                    Object iObject = getObjectField(param.thisObject, "c");
+//
+//                                    if(iObject == null) {
+//                                        Logger.log("iObject is Null! :(");
+//                                    } else {
+//                                        Logger.printTitle("Interface Info!", LogType.DEBUG);
+//                                        Logger.printMessage("iObject: " + iObject, LogType.DEBUG);
+//                                        Logger.printMessage("iObject.getClass(): " + iObject.getClass(), LogType.DEBUG);
+//                                        Logger.printMessage("iObject.getClass().getCanonicalName(): " + iObject.getClass().getCanonicalName(), LogType.DEBUG);
+//                                        Logger.printFilledRow(LogType.DEBUG);
+//                                        Logger.logStackTrace();
+//                                    }
+//
+//                                    Logger.log("Starting g() if statement.");
+//                                    if(!((Boolean) callMethod(getObjectField(param.thisObject, "f"), "isStarted", new Class[]{}))) {
+//                                        Logger.log("g() if done");
+//                                        Logger.log("Setting k to 0");
+//                                        setObjectField(param.thisObject, "k", 0);
+//                                        Logger.log("k set to 0");
+//                                        Logger.log("Calling this.a.clear()");
+//                                        callMethod(getObjectField(param.thisObject, "a"), "clear", new Class[]{});
+//                                        Logger.log("Called this.a.clear");
+//                                        Logger.log("Setting this.e.b to true");
+//                                        setObjectField(getObjectField(param.thisObject, "e"), "b", true);
+//                                        Logger.log("Set this.e.b to true");
+//                                        Logger.log("Calling this.i.setVisibility(View.INVISIBLE)");
+//                                        ((ImageView) getObjectField(param.thisObject, "i")).setVisibility(View.INVISIBLE);
+//                                        Logger.log("Called this.i.setVisibility(View.INVISIBLE");
+//                                        Logger.log("Calling this.e.setProfilePicturesControlButtonsVisibility(4)");
+//                                        callMethod(getObjectField(param.thisObject, "e"), "setProfilePicturesControlButtonsVisibility", new Class[]{int.class}, 4);
+//                                        Logger.log("called this.e.setProfilePicturesControlButtonsVisibility(4)");
+//                                        Logger.log("Calling this.e.a()");
+//                                        callMethod(getObjectField(param.thisObject, "e"), "a", new Class[]{});
+//                                        Logger.log("called this.e.a()");
+//                                    }
+//                                    return null;
+//                                }
+//                            });
 
 
 
@@ -1093,13 +1096,12 @@ public class HookMethods
     }
 
 
-    private int getPhotoNum() {
-        if(toggle) {
-            toggle = !toggle;
-            return photoNum++ % 5;
+    private Bitmap getPhoto(Bitmap bmp) {
+        if(bmp == prevBmp || prevBmp == null) {
+            prevBmp = ((BitmapDrawable) HookedLayouts.profileImgBtns[photoNum].getDrawable()).getBitmap();
+        } else {
+            prevBmp = ((BitmapDrawable) HookedLayouts.profileImgBtns[++photoNum].getDrawable()).getBitmap();
         }
-
-        toggle = !toggle;
-        return photoNum % 5;
+        return prevBmp;
     }
 }

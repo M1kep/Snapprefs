@@ -106,6 +106,7 @@ public class Logger {
     public static void printTitle(String message) {
         printFinalMessage(message, LogType.DEBUG);
     }
+
     /**
      * Prints a message with left and right aligned '#'s, to be used with {@link #printTitle(String, LogType)} and {@link #printFilledRow(LogType)}
      *

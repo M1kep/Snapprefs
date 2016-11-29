@@ -481,9 +481,9 @@ public class HookMethods
                                         Logger.printFilledRow(LogType.DEBUG);
                                         Logger.logStackTrace();
                                     }
-                                    
+
                                     Logger.log("Starting g() if statement.");
-                                    if((boolean) callMethod(getObjectField(param.thisObject, "c"), "d", new Class[]{}) && !((Boolean) callMethod(getObjectField(param.thisObject, "f"), "isStarted", new Class[]{}))) {
+                                    if(!((Boolean) callMethod(getObjectField(param.thisObject, "f"), "isStarted", new Class[]{}))) {
                                         Logger.log("g() if done");
                                         Logger.log("Setting k to 0");
                                         setObjectField(param.thisObject, "k", 0);
@@ -502,6 +502,7 @@ public class HookMethods
                                         Logger.log("called this.e.setProfilePicturesControlButtonsVisibility(4)");
                                         Logger.log("Calling this.e.a()");
                                         callMethod(getObjectField(param.thisObject, "e"), "a", new Class[]{});
+                                        Logger.log("called this.e.a()");
                                     }
                                     return null;
                                 }

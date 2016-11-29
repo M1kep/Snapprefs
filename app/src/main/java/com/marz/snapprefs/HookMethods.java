@@ -22,6 +22,7 @@ import android.os.Message;
 import android.text.InputFilter;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -342,7 +343,7 @@ public class HookMethods
 
                     XC_MethodHook initHook = new XC_MethodHook() {
                         @Override
-                        protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                        protected void afterHookedMethod(final MethodHookParam param) throws Throwable {
                             //Preferences.loadMapFromXposed();
                             SnapContext = (Activity) param.thisObject;
                             if (!Preferences.getBool(Prefs.ACCEPTED_TOU)) {//new ContextThemeWrapper(context.createPackageContext("com.marz.snapprefs", Context.CONTEXT_IGNORE_SECURITY), R.style.AppCompatDialog)
@@ -465,21 +466,44 @@ public class HookMethods
                                     });
 
 
-                            XposedHelpers.findAndHookMethod("com.snapchat.android.fragments.addfriends.ProfileFragment", lpparam.classLoader, "g", new XC_MethodHook() {
+                            XposedHelpers.findAndHookMethod("com.snapchat.android.fragments.addfriends.ProfileFragment", lpparam.classLoader, "g", new XC_MethodReplacement() {
                                 @Override
-                                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                                    super.afterHookedMethod(param);
-                                    Logger.printFilledRow();
-                                    Logger.printFilledRow();
-                                    Logger.log("Finished com.snapchat.android.fragments.addFriends.ProfileFragement \"g\"");
-                                }
+                                protected Object replaceHookedMethod(MethodHookParam methodHookParam) throws Throwable {
+                                    Object iObject = getObjectField(param.thisObject, "c");
 
-                                @Override
-                                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                                    super.beforeHookedMethod(param);
-                                    Logger.printFilledRow();
-                                    Logger.printFilledRow();
-                                    Logger.log("Started com.snapchat.android.fragments.addFriends.ProfileFragement \"g\"");
+                                    if(iObject == null) {
+                                        Logger.log("iObject is Null! :(");
+                                    } else {
+                                        Logger.printTitle("Interface Info!", LogType.DEBUG);
+                                        Logger.printMessage("iObject: " + iObject, LogType.DEBUG);
+                                        Logger.printMessage("iObject.getClass(): " + iObject.getClass(), LogType.DEBUG);
+                                        Logger.printMessage("iObject.getClass().getCanonicalName(): " + iObject.getClass().getCanonicalName(), LogType.DEBUG);
+                                        Logger.printFilledRow(LogType.DEBUG);
+                                        Logger.logStackTrace();
+                                    }
+                                    
+                                    Logger.log("Starting g() if statement.");
+                                    if((boolean) callMethod(getObjectField(param.thisObject, "c"), "d", new Class[]{}) && !((Boolean) callMethod(getObjectField(param.thisObject, "f"), "isStarted", new Class[]{}))) {
+                                        Logger.log("g() if done");
+                                        Logger.log("Setting k to 0");
+                                        setObjectField(param.thisObject, "k", 0);
+                                        Logger.log("k set to 0");
+                                        Logger.log("Calling this.a.clear()");
+                                        callMethod(getObjectField(param.thisObject, "a"), "clear", new Class[]{});
+                                        Logger.log("Called this.a.clear");
+                                        Logger.log("Setting this.e.b to true");
+                                        setObjectField(getObjectField(param.thisObject, "e"), "b", true);
+                                        Logger.log("Set this.e.b to true");
+                                        Logger.log("Calling this.i.setVisibility(View.INVISIBLE)");
+                                        ((ImageView) getObjectField(param.thisObject, "i")).setVisibility(View.INVISIBLE);
+                                        Logger.log("Called this.i.setVisibility(View.INVISIBLE");
+                                        Logger.log("Calling this.e.setProfilePicturesControlButtonsVisibility(4)");
+                                        callMethod(getObjectField(param.thisObject, "e"), "setProfilePicturesControlButtonsVisibility", new Class[]{int.class}, 4);
+                                        Logger.log("called this.e.setProfilePicturesControlButtonsVisibility(4)");
+                                        Logger.log("Calling this.e.a()");
+                                        callMethod(getObjectField(param.thisObject, "e"), "a", new Class[]{});
+                                    }
+                                    return null;
                                 }
                             });
 

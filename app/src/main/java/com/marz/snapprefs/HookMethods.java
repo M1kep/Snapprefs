@@ -302,6 +302,33 @@ public class HookMethods
                 }
             });
 
+            Class TAKE_PHOTO_METHOD = findClass("com.snapchat.android.camera.TakePhotoCallback.TAKE_PHOTO_METHOD", lpparam.classLoader);
+            findAndHookMethod("com.snapchat.android.fragments.addfriends.ProfileFragment$d", lpparam.classLoader, "a",
+                    Bitmap.class, TAKE_PHOTO_METHOD, new XC_MethodHook() {
+                        @Override
+                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                            super.beforeHookedMethod(param);
+//                                            Bitmap image = (Bitmap) param.args[0];
+//
+//                                            if(image == null) {
+//                                                Logger.log("Null Profile Image");
+//                                                return;
+//                                            }
+//                                            Logger.log("PhotoNum: " + getPhotoNum());
+//                                            Logger.printTitle("Bitmap Input Info");
+//                                            Logger.printMessage("Bitmap Object: " + image);
+//                                            Logger.printMessage("Bitmap Height: " + image.getHeight());
+//                                            Logger.printMessage("Bitmap Width: " + image.getWidth());
+//                                            Logger.printFilledRow();
+                            Bitmap imgToInject = getPhoto((Bitmap) param.args[0]);
+                            Logger.log("photoNum Value: " + photoNum);
+                            Logger.log("Current Photo To Inject: " + imgToInject);
+                            Logger.printMessage("Bitmap Height: " + imgToInject.getHeight());
+                            Logger.printMessage("Bitmap Width: " + imgToInject.getWidth());
+                            Logger.log("Injecting!");
+                            param.args[0] = imgToInject;
+                        }
+                    });
 
             findAndHookMethod("android.app.Application", lpparam.classLoader, "attach", Context.class, new XC_MethodHook() {
                 @Override
@@ -446,33 +473,6 @@ public class HookMethods
                             if (Preferences.getLicence() > 0){
                                 Premium.initPremium(lpparam);
                             }
-
-                            Class TAKE_PHOTO_METHOD = findClass("com.snapchat.android.camera.TakePhotoCallback.TAKE_PHOTO_METHOD", lpparam.classLoader);
-                            findAndHookMethod("com.snapchat.android.fragments.addfriends.ProfileFragment$d", lpparam.classLoader, "a",
-                                    Bitmap.class, TAKE_PHOTO_METHOD, new XC_MethodHook() {
-                                        @Override
-                                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                                            super.beforeHookedMethod(param);
-//                                            Bitmap image = (Bitmap) param.args[0];
-//
-//                                            if(image == null) {
-//                                                Logger.log("Null Profile Image");
-//                                                return;
-//                                            }
-//                                            Logger.log("PhotoNum: " + getPhotoNum());
-//                                            Logger.printTitle("Bitmap Input Info");
-//                                            Logger.printMessage("Bitmap Object: " + image);
-//                                            Logger.printMessage("Bitmap Height: " + image.getHeight());
-//                                            Logger.printMessage("Bitmap Width: " + image.getWidth());
-//                                            Logger.printFilledRow();
-                                            Bitmap imgToInject = getPhoto((Bitmap) param.args[0]);
-                                            Logger.log("photoNum Value: " + photoNum);
-                                            Logger.log("Current Photo To Inject: " + imgToInject);
-                                            Logger.log("Injecting!");
-                                            param.args[0] = imgToInject;
-                                        }
-                                    });
-
 
 //                            XposedHelpers.findAndHookMethod("com.snapchat.android.fragments.addfriends.ProfileFragment", lpparam.classLoader, "g", new XC_MethodReplacement() {
 //                                @Override

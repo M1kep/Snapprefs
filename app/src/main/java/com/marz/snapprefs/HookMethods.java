@@ -1098,9 +1098,9 @@ public class HookMethods
 
     private Bitmap getPhoto(Bitmap bmp) {
         if(bmp == prevBmp || prevBmp == null) {
-            prevBmp = ((BitmapDrawable) HookedLayouts.profileImgBtns[photoNum].getDrawable()).getBitmap();
+            prevBmp = ((BitmapDrawable) HookedLayouts.profileImgBtns[photoNum % 5].getDrawable()).getBitmap();
         } else {
-            prevBmp = ((BitmapDrawable) HookedLayouts.profileImgBtns[++photoNum].getDrawable()).getBitmap();
+            prevBmp = ((BitmapDrawable) HookedLayouts.profileImgBtns[++photoNum % 5].getDrawable()).getBitmap();
         }
         return prevBmp;
     }

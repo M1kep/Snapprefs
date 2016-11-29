@@ -126,9 +126,10 @@ public class Logger {
     }
 
     /**
-     * Prints a message using @printMessage and then prints a filled row with @printFilledRow
+     * Prints a message using @printMessage and then prints a filled row with @printFilledRow using the provide {@link LogType}
      *
      * @param message The final message that is going to be printed
+     * @param logType The LogType to be used
      */
     static void printFinalMessage(String message, LogType logType) {
         logType.removeTag();
@@ -136,6 +137,14 @@ public class Logger {
         printFilledRow(logType);
     }
 
+    /**
+     * Prints a message using @printMessage and then prints a filled row with @printFilledRow using {@link LogType#DEBUG}
+     *
+     * @param message The final message that is going to be printed
+     */
+    static void printFinalMessage(String message) {
+        printFinalMessage(message, LogType.DEBUG);
+    }
     /**
      * Print a '#' Filled row of width {@link #printWidth} using the specified {@link LogType}
      *

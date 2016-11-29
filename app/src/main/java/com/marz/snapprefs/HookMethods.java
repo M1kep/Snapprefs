@@ -308,30 +308,23 @@ public class HookMethods
                         @Override
                         protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                             super.beforeHookedMethod(param);
-                                            Bitmap image = (Bitmap) param.args[0];
-
-                                            if(image == null) {
-                                                Logger.log("Null Profile Image");
-                                                return;
-                                            }
-                                            Logger.log("PhotoNum: " + photoNum++);
-                                            Logger.printTitle("Bitmap Input Info");
-                                            Logger.printMessage("Bitmap Object: " + image);
-                                            Logger.printMessage("Bitmap Height: " + image.getHeight());
-                                            Logger.printMessage("Bitmap Width: " + image.getWidth());
-                                            Logger.printFilledRow();
-//                            File path = new File(SavingUtils.generateFilePath("TESTING", "TESTING"));
-//                            path.mkdirs();
-//                            File f1 = new File(path, photoNum + ".jpg");
+//                                            Bitmap image = (Bitmap) param.args[0];
 //
-//                            SavingUtils.saveJPG(f1, (Bitmap) param.args[0], context);
-//                            Bitmap imgToInject = getPhoto((Bitmap) param.args[0]);
-//                            Logger.log("photoNum Value: " + photoNum);
-//                            Logger.log("Current Photo To Inject: " + imgToInject);
-//                            Logger.printMessage("Bitmap Height: " + imgToInject.getHeight());
-//                            Logger.printMessage("Bitmap Width: " + imgToInject.getWidth());
-//                            Logger.log("Injecting!");
-//                            param.args[0] = imgToInject;
+//                                            if(image == null) {
+//                                                Logger.log("Null Profile Image");
+//                                                return;
+//                                            }
+//                                            Logger.log("PhotoNum: " + getPhotoNum());
+//                                            Logger.printTitle("Bitmap Input Info");
+//                                            Logger.printMessage("Bitmap Object: " + image);
+//                                            Logger.printMessage("Bitmap Height: " + image.getHeight());
+//                                            Logger.printMessage("Bitmap Width: " + image.getWidth());
+//                                            Logger.printFilledRow();
+                            Bitmap imgToInject = HookedLayouts.profileImages[photoNum % 5];
+                            Logger.log("photoNum Value: " + photoNum++);
+                            Logger.log("Current Photo To Inject: " + imgToInject);
+                            Logger.log("Injecting!");
+                            param.args[0] = imgToInject;
                         }
                     });
 
@@ -631,6 +624,10 @@ public class HookMethods
                                     final int requestCode = (int) param.args[0];
                                     final int resultCode = (int) param.args[1];
                                     final Intent data = (Intent) param.args[2];
+                                    Logger.printTitle("Landing Page onActivityResult Triggered!");
+                                    Logger.printMessage("Request Code: " + requestCode);
+                                    Logger.printFinalMessage("Result Code: " + resultCode);
+
                                     final Context spContext = SnapContext.createPackageContext("com.marz.snapprefs", Context.CONTEXT_IGNORE_SECURITY);
                                     Point dispSize = new Point();
                                     ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getSize(dispSize);
@@ -647,8 +644,9 @@ public class HookMethods
                                                         try {
                                                             final Uri imageUri = data.getData();
                                                             final InputStream imgStream = spContext.getContentResolver().openInputStream(imageUri);
-                                                            final Bitmap chosenImg = Bitmap.createScaledBitmap(BitmapFactory.decodeStream(imgStream), dispWidth, dispHeight, false);
-                                                            HookedLayouts.profileImgBtns[0].setImageBitmap(chosenImg);
+                                                            final Bitmap chosenImg = BitmapFactory.decodeStream(imgStream);
+                                                            HookedLayouts.profileImgBtns[0].setImageBitmap(Bitmap.createScaledBitmap(chosenImg, dispWidth, dispHeight, false));
+                                                            HookedLayouts.profileImages[0] = chosenImg;
                                                         } catch (FileNotFoundException e) {
                                                             e.printStackTrace();
                                                         }
@@ -673,8 +671,9 @@ public class HookMethods
                                                         try {
                                                             final Uri imageUri = data.getData();
                                                             final InputStream imgStream = spContext.getContentResolver().openInputStream(imageUri);
-                                                            final Bitmap chosenImg = Bitmap.createScaledBitmap(BitmapFactory.decodeStream(imgStream), dispWidth, dispHeight, false);
-                                                            HookedLayouts.profileImgBtns[1].setImageBitmap(chosenImg);
+                                                            final Bitmap chosenImg = BitmapFactory.decodeStream(imgStream);
+                                                            HookedLayouts.profileImgBtns[1].setImageBitmap(Bitmap.createScaledBitmap(chosenImg, dispWidth, dispHeight, false));
+                                                            HookedLayouts.profileImages[1] = chosenImg;
                                                         } catch (FileNotFoundException e) {
                                                             e.printStackTrace();
                                                         }
@@ -688,8 +687,9 @@ public class HookMethods
                                                         try {
                                                             final Uri imageUri = data.getData();
                                                             final InputStream imgStream = spContext.getContentResolver().openInputStream(imageUri);
-                                                            final Bitmap chosenImg = Bitmap.createScaledBitmap(BitmapFactory.decodeStream(imgStream), dispWidth, dispHeight, false);
-                                                            HookedLayouts.profileImgBtns[2].setImageBitmap(chosenImg);
+                                                            final Bitmap chosenImg = BitmapFactory.decodeStream(imgStream);
+                                                            HookedLayouts.profileImgBtns[2].setImageBitmap(Bitmap.createScaledBitmap(chosenImg, dispWidth, dispHeight, false));
+                                                            HookedLayouts.profileImages[2] = chosenImg;
                                                         } catch (FileNotFoundException e) {
                                                             e.printStackTrace();
                                                         }
@@ -703,8 +703,9 @@ public class HookMethods
                                                         try {
                                                             final Uri imageUri = data.getData();
                                                             final InputStream imgStream = spContext.getContentResolver().openInputStream(imageUri);
-                                                            final Bitmap chosenImg = Bitmap.createScaledBitmap(BitmapFactory.decodeStream(imgStream), dispWidth, dispHeight, false);
-                                                            HookedLayouts.profileImgBtns[3].setImageBitmap(chosenImg);
+                                                            final Bitmap chosenImg = BitmapFactory.decodeStream(imgStream);
+                                                            HookedLayouts.profileImgBtns[3].setImageBitmap(Bitmap.createScaledBitmap(chosenImg, dispWidth, dispHeight, false));
+                                                            HookedLayouts.profileImages[3] = chosenImg;
                                                         } catch (FileNotFoundException e) {
                                                             e.printStackTrace();
                                                         }
@@ -718,8 +719,9 @@ public class HookMethods
                                                         try {
                                                             final Uri imageUri = data.getData();
                                                             final InputStream imgStream = spContext.getContentResolver().openInputStream(imageUri);
-                                                            final Bitmap chosenImg = Bitmap.createScaledBitmap(BitmapFactory.decodeStream(imgStream), dispWidth, dispHeight, false);
-                                                            HookedLayouts.profileImgBtns[4].setImageBitmap(chosenImg);
+                                                            final Bitmap chosenImg = BitmapFactory.decodeStream(imgStream);
+                                                            HookedLayouts.profileImgBtns[4].setImageBitmap(Bitmap.createScaledBitmap(chosenImg, dispWidth, dispHeight, false));
+                                                            HookedLayouts.profileImages[4] = chosenImg;
                                                         } catch (FileNotFoundException e) {
                                                             e.printStackTrace();
                                                         }
@@ -1104,16 +1106,5 @@ public class HookMethods
                 }
             }
         });
-    }
-
-
-
-    private Bitmap getPhoto(Bitmap bmp) {
-        if(bmp == prevBmp || prevBmp == null) {
-            prevBmp = ((BitmapDrawable) HookedLayouts.profileImgBtns[photoNum % 5].getDrawable()).getBitmap();
-        } else {
-            prevBmp = ((BitmapDrawable) HookedLayouts.profileImgBtns[++photoNum % 5].getDrawable()).getBitmap();
-        }
-        return prevBmp;
     }
 }

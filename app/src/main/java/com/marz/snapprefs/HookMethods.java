@@ -15,6 +15,7 @@ import android.graphics.Point;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -302,32 +303,44 @@ public class HookMethods
                 }
             });
 
-            Class TAKE_PHOTO_METHOD = findClass("com.snapchat.android.camera.TakePhotoCallback.TAKE_PHOTO_METHOD", lpparam.classLoader);
-            findAndHookMethod("com.snapchat.android.fragments.addfriends.ProfileFragment$d", lpparam.classLoader, "a",
-                    Bitmap.class, TAKE_PHOTO_METHOD, new XC_MethodHook() {
-                        @Override
-                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                            super.beforeHookedMethod(param);
-//                                            Bitmap image = (Bitmap) param.args[0];
-//
-//                                            if(image == null) {
-//                                                Logger.log("Null Profile Image");
-//                                                return;
-//                                            }
-//                                            Logger.log("PhotoNum: " + getPhotoNum());
-//                                            Logger.printTitle("Bitmap Input Info");
-//                                            Logger.printMessage("Bitmap Object: " + image);
-//                                            Logger.printMessage("Bitmap Height: " + image.getHeight());
-//                                            Logger.printMessage("Bitmap Width: " + image.getWidth());
-//                                            Logger.printFilledRow();
-                            Bitmap imgToInject = HookedLayouts.profileImages[photoNum % 5];
-                            Logger.log("photoNum Value: " + photoNum++);
-                            Logger.log("Current Photo To Inject: " + imgToInject);
-                            Logger.log("Injecting!");
-                            param.args[0] = imgToInject;
-                        }
-                    });
+//            Class TAKE_PHOTO_METHOD = findClass("com.snapchat.android.camera.TakePhotoCallback.TAKE_PHOTO_METHOD", lpparam.classLoader);
+//            findAndHookMethod("com.snapchat.android.fragments.addfriends.ProfileFragment$d", lpparam.classLoader, "a",
+//                    Bitmap.class, TAKE_PHOTO_METHOD, new XC_MethodHook() {
+//                        @Override
+//                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+//                            super.beforeHookedMethod(param);
+////                                            Bitmap image = (Bitmap) param.args[0];
+////
+////                                            if(image == null) {
+////                                                Logger.log("Null Profile Image");
+////                                                return;
+////                                            }
+////                                            Logger.log("PhotoNum: " + getPhotoNum());
+////                                            Logger.printTitle("Bitmap Input Info");
+////                                            Logger.printMessage("Bitmap Object: " + image);
+////                                            Logger.printMessage("Bitmap Height: " + image.getHeight());
+////                                            Logger.printMessage("Bitmap Width: " + image.getWidth());
+////                                            Logger.printFilledRow();
+//                            Bitmap imgToInject = HookedLayouts.profileImages[photoNum % 5];
+//                            Logger.log("photoNum Value: " + photoNum++);
+//                            Logger.log("Current Photo To Inject: " + imgToInject);
+//                            Logger.log("Injecting!");
+//                            param.args[0] = imgToInject;
+//                        }
+//                    });
 
+            hookAllConstructors(findClass("Xl", lpparam.classLoader), new XC_MethodHook() {
+                @Override
+                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                    super.beforeHookedMethod(param);
+                    Bitmap image = (Bitmap) param.args[0];
+                    File path = new File(SavingUtils.generateFilePath("TESTING", "TESTING"));
+                    Logger.printMessage(String.format("Found image [w:%s][h:%s]", image.getWidth(), image.getHeight()), LogType.DEBUG);
+                    Logger.printMessage("Attempting to save photo!", LogType.DEBUG);
+                    File f1 = new File(path, photoNum++ + ".jpg");
+                    SavingUtils.saveJPG(f1, image, context);
+                }
+            });
             XposedHelpers.findAndHookMethod("com.snapchat.android.LandingPageActivity", lpparam.classLoader, "onActivityResult", int.class, int.class, XposedHelpers.findClass("android.content.Intent", lpparam.classLoader), new XC_MethodHook() {
                 @Override
                 protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
@@ -340,10 +353,10 @@ public class HookMethods
                     Logger.printFinalMessage("Result Code: " + resultCode);
 
                     final Context spContext = SnapContext.createPackageContext("com.marz.snapprefs", Context.CONTEXT_IGNORE_SECURITY);
-//                    Point dispSize = new Point();
-//                    ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getSize(dispSize);
-//                    final int dispWidth = dispSize.x;
-//                    final int dispHeight = dispSize.y;
+                    Point dispSize = new Point();
+                    ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getSize(dispSize);
+                    final int dispWidth = dispSize.x;
+                    final int dispHeight = dispSize.y;
                     if(resultCode == RESULT_OK) {
                         File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Snapprefs/temp");
                         dir.mkdirs();
@@ -355,7 +368,7 @@ public class HookMethods
                                         try {
                                             final Uri imageUri = data.getData();
                                             final InputStream imgStream = spContext.getContentResolver().openInputStream(imageUri);
-                                            final Bitmap chosenImg = Bitmap.createScaledBitmap(BitmapFactory.decodeStream(imgStream), 1920, 1080, false);
+                                            final Bitmap chosenImg = Bitmap.createScaledBitmap(BitmapFactory.decodeStream(imgStream), dispWidth, dispHeight, false);
                                             HookedLayouts.profileImgBtns[0].setImageBitmap(chosenImg);
                                             HookedLayouts.profileImages[0] = chosenImg;
                                         } catch (FileNotFoundException e) {
@@ -371,7 +384,7 @@ public class HookMethods
                                         try {
                                             final Uri imageUri = data.getData();
                                             final InputStream imgStream = spContext.getContentResolver().openInputStream(imageUri);
-                                            final Bitmap chosenImg = Bitmap.createScaledBitmap(BitmapFactory.decodeStream(imgStream), 1920, 1080, false);
+                                            final Bitmap chosenImg = Bitmap.createScaledBitmap(BitmapFactory.decodeStream(imgStream), dispWidth, dispHeight, false);
                                             HookedLayouts.profileImgBtns[1].setImageBitmap(chosenImg);
                                             HookedLayouts.profileImages[1] = chosenImg;
                                         } catch (FileNotFoundException e) {
@@ -387,7 +400,7 @@ public class HookMethods
                                         try {
                                             final Uri imageUri = data.getData();
                                             final InputStream imgStream = spContext.getContentResolver().openInputStream(imageUri);
-                                            final Bitmap chosenImg = Bitmap.createScaledBitmap(BitmapFactory.decodeStream(imgStream), 1920, 1080, false);
+                                            final Bitmap chosenImg = Bitmap.createScaledBitmap(BitmapFactory.decodeStream(imgStream), dispWidth, dispHeight, false);
                                             HookedLayouts.profileImgBtns[2].setImageBitmap(chosenImg);
                                             HookedLayouts.profileImages[2] = chosenImg;
                                         } catch (FileNotFoundException e) {
@@ -403,7 +416,7 @@ public class HookMethods
                                         try {
                                             final Uri imageUri = data.getData();
                                             final InputStream imgStream = spContext.getContentResolver().openInputStream(imageUri);
-                                            final Bitmap chosenImg = Bitmap.createScaledBitmap(BitmapFactory.decodeStream(imgStream), 1920, 1080, false);
+                                            final Bitmap chosenImg = Bitmap.createScaledBitmap(BitmapFactory.decodeStream(imgStream), dispWidth, dispHeight, false);
                                             HookedLayouts.profileImgBtns[3].setImageBitmap(chosenImg);
                                             HookedLayouts.profileImages[3] = chosenImg;
                                         } catch (FileNotFoundException e) {
@@ -419,7 +432,7 @@ public class HookMethods
                                         try {
                                             final Uri imageUri = data.getData();
                                             final InputStream imgStream = spContext.getContentResolver().openInputStream(imageUri);
-                                            final Bitmap chosenImg = Bitmap.createScaledBitmap(BitmapFactory.decodeStream(imgStream), 1920, 1080, false);
+                                            final Bitmap chosenImg = Bitmap.createScaledBitmap(BitmapFactory.decodeStream(imgStream), dispWidth, dispHeight, false);
                                             HookedLayouts.profileImgBtns[4].setImageBitmap(chosenImg);
                                             HookedLayouts.profileImages[4] = chosenImg;
                                         } catch (FileNotFoundException e) {

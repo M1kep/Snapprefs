@@ -334,11 +334,14 @@ public class HookMethods
                 protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                     super.beforeHookedMethod(param);
                     Bitmap image = (Bitmap) param.args[0];
-                    File path = new File(SavingUtils.generateFilePath("TESTING", "TESTING"));
-                    Logger.printMessage(String.format("Found image [w:%s][h:%s]", image.getWidth(), image.getHeight()), LogType.DEBUG);
-                    Logger.printMessage("Attempting to save photo!", LogType.DEBUG);
-                    File f1 = new File(path, photoNum++ + ".jpg");
-                    SavingUtils.saveJPG(f1, image, context);
+                    int picNum = (int) param.args[1];
+                    Logger.printMessage("Injecting scaled image.");
+                    param.args[0] = Bitmap.createScaledBitmap(HookedLayouts.profileImages[photoNum++ % 5], 768, 768, false);
+//                    File path = new File(SavingUtils.generateFilePath("TESTING", "TESTING"));
+//                    Logger.printMessage(String.format("Found image [w:%s][h:%s]", image.getWidth(), image.getHeight()), LogType.DEBUG);
+//                    Logger.printMessage("Attempting to save photo!", LogType.DEBUG);
+//                    File f1 = new File(path, photoNum++ + ".jpg");
+//                    SavingUtils.saveJPG(f1, image, context);
                 }
             });
             XposedHelpers.findAndHookMethod("com.snapchat.android.LandingPageActivity", lpparam.classLoader, "onActivityResult", int.class, int.class, XposedHelpers.findClass("android.content.Intent", lpparam.classLoader), new XC_MethodHook() {

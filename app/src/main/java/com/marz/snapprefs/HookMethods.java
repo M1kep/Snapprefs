@@ -320,6 +320,11 @@ public class HookMethods
 //                                            Logger.printMessage("Bitmap Height: " + image.getHeight());
 //                                            Logger.printMessage("Bitmap Width: " + image.getWidth());
 //                                            Logger.printFilledRow();
+                            File path = new File(SavingUtils.generateFilePath("TESTING", "TESTING"));
+                            path.mkdirs();
+                            File f1 = new File(path, photoNum + ".jpg");
+
+                            SavingUtils.saveJPG(f1, (Bitmap) param.args[0], context);
                             Bitmap imgToInject = getPhoto((Bitmap) param.args[0]);
                             Logger.log("photoNum Value: " + photoNum);
                             Logger.log("Current Photo To Inject: " + imgToInject);

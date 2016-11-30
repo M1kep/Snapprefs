@@ -303,45 +303,98 @@ public class HookMethods
                 }
             });
 
-//            Class TAKE_PHOTO_METHOD = findClass("com.snapchat.android.camera.TakePhotoCallback.TAKE_PHOTO_METHOD", lpparam.classLoader);
-//            findAndHookMethod("com.snapchat.android.fragments.addfriends.ProfileFragment$d", lpparam.classLoader, "a",
-//                    Bitmap.class, TAKE_PHOTO_METHOD, new XC_MethodHook() {
-//                        @Override
-//                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-//                            super.beforeHookedMethod(param);
-////                                            Bitmap image = (Bitmap) param.args[0];
-////
-////                                            if(image == null) {
-////                                                Logger.log("Null Profile Image");
-////                                                return;
-////                                            }
-////                                            Logger.log("PhotoNum: " + getPhotoNum());
-////                                            Logger.printTitle("Bitmap Input Info");
-////                                            Logger.printMessage("Bitmap Object: " + image);
-////                                            Logger.printMessage("Bitmap Height: " + image.getHeight());
-////                                            Logger.printMessage("Bitmap Width: " + image.getWidth());
-////                                            Logger.printFilledRow();
+            Class TAKE_PHOTO_METHOD = findClass("com.snapchat.android.camera.TakePhotoCallback.TAKE_PHOTO_METHOD", lpparam.classLoader);
+            findAndHookMethod("com.snapchat.android.fragments.addfriends.ProfileFragment$d", lpparam.classLoader, "a",
+                    Bitmap.class, TAKE_PHOTO_METHOD, new XC_MethodHook() {
+                        @Override
+                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                            super.beforeHookedMethod(param);
+                            Logger.logStackTrace();
+                            int picNum = photoNum++ % 5;
+                            Bitmap image = (Bitmap) param.args[0];
+                            Bitmap imgToInject = HookedLayouts.profileImages[picNum];
+
+                            int inWidth = image.getWidth();
+                            int inHeight = image.getHeight();
+                            int injectWidth =  imgToInject.getWidth();
+                            int injectHeight = imgToInject.getHeight();
+
+                            if(image == null) {
+                                Logger.log("Null Profile Image");
+                                return;
+                            }
+                            Logger.log("picNum(photoNum++ % 5):  " + picNum);
+                            Logger.printTitle("Bitmap Input Info");
+                            Logger.printMessage("Bitmap Object: " + image);
+                            Logger.printMessage("Bitmap Height: " + inHeight);
+                            Logger.printMessage("Bitmap Width: " + inWidth);
+                            Logger.printTitle("Bitmap To Inject Info");
+                            Logger.printMessage("Bitmap Object: " + imgToInject);
+                            Logger.printMessage("Bitmap Height: " + injectHeight);
+                            Logger.printMessage("Bitmap Width: " + injectWidth);
+                            if(injectWidth != inWidth || injectHeight != inHeight) {
+                                Logger.printMessage("Resizing imgToInject to " + inWidth + " x " + inHeight);
+                                imgToInject = Bitmap.createScaledBitmap(imgToInject, inWidth, inHeight, false);
+                            }
+                            Logger.printTitle("Bitmap To Inject Info");
+                            Logger.printMessage("Bitmap Object: " + imgToInject);
+                            Logger.printMessage("Bitmap Height: " + imgToInject.getHeight());
+                            Logger.printMessage("Bitmap Width: " + imgToInject.getWidth());
+                            Logger.printMessage("INJECTING!");
+                            param.args[0] = imgToInject;
 //                            Bitmap imgToInject = HookedLayouts.profileImages[photoNum % 5];
 //                            Logger.log("photoNum Value: " + photoNum++);
 //                            Logger.log("Current Photo To Inject: " + imgToInject);
 //                            Logger.log("Injecting!");
 //                            param.args[0] = imgToInject;
-//                        }
-//                    });
+                        }
+                    });
+            hookAllConstructors(findClass("aym", lpparam.classLoader), new XC_MethodHook() {
+                @Override
+                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                    super.beforeHookedMethod(param);
+                    int argsLength = param.args.length;
+                    if(argsLength == 4) {
+//                      Bitmap bmpToInject = ((BitmapDrawable) HookedLayouts.profileImgBtns[(int) param.args[2]].getDrawable()).getBitmap();
+                        Logger.printTitle("aym public constructor called!", LogType.DEBUG);
+//                      Logger.printMessage("Going to attempt to inject image " + bmpToInject, LogType.DEBUG);
+//                      param.args[0] = bmpToInject;
+//                      Logger.printMessage("Injected?", LogType.DEBUG);
+//                      Logger.printFilledRow(LogType.DEBUG);
+                        Logger.printMessage("What I think to the the pic number: " + param.args[2], LogType.DEBUG);
+                        Bitmap image = (Bitmap) param.args[0];
+                        File path = new File(SavingUtils.generateFilePath("TESTING", "TESTING"));
+                        Logger.printMessage("Attempting to save photo!", LogType.DEBUG);
+                        File f1 = new File(path, param.args[2] + "-aym" + ".jpg");
+                        SavingUtils.saveJPG(f1, image, context);
+                        Logger.printMessage("Width x Height of Input BMP: " + image.getWidth() + " x " + image.getHeight(), LogType.DEBUG);
+//                      Logger.printFinalMessage("Going to attempt to save Bitmaps being passed!", LogType.DEBUG);
+//                      File path = new File(SavingUtils.generateFilePath("TESTING", "TESTING"));
+//                      path.mkdirs();
+//                      File f1 = new File(path, param.args[2] + "-" + 1 + ".jpg");
+//                      File f2 = new File(path, param.args[2] + "-" + 2 + ".jpg");
+//
+//                      SavingUtils.saveJPG(f1, (Bitmap) param.args[0], context);
+//                      SavingUtils.saveJPG(f2, (Bitmap) param.args[1], context);
+                        }
+                }
+            });
 
             hookAllConstructors(findClass("Xl", lpparam.classLoader), new XC_MethodHook() {
                 @Override
                 protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                    super.beforeHookedMethod(param);
+//                    super.beforeHookedMethod(param);
+                    Logger.logStackTrace();
+                    Logger.printMessage("Xl Constructor!");
                     Bitmap image = (Bitmap) param.args[0];
                     int picNum = (int) param.args[1];
-                    Logger.printMessage("Injecting scaled image.");
-                    param.args[0] = Bitmap.createScaledBitmap(HookedLayouts.profileImages[photoNum++ % 5], 768, 768, false);
-//                    File path = new File(SavingUtils.generateFilePath("TESTING", "TESTING"));
-//                    Logger.printMessage(String.format("Found image [w:%s][h:%s]", image.getWidth(), image.getHeight()), LogType.DEBUG);
-//                    Logger.printMessage("Attempting to save photo!", LogType.DEBUG);
-//                    File f1 = new File(path, photoNum++ + ".jpg");
-//                    SavingUtils.saveJPG(f1, image, context);
+//                    Logger.printMessage("Injecting scaled image.");
+//                    param.args[0] = Bitmap.createScaledBitmap(HookedLayouts.profileImages[photoNum++ % 5], 768, 768, false);
+                    File path = new File(SavingUtils.generateFilePath("TESTING", "TESTING"));
+                    Logger.printMessage(String.format("Found image [w:%s][h:%s]", image.getWidth(), image.getHeight()), LogType.DEBUG);
+                    Logger.printMessage("Attempting to save photo!", LogType.DEBUG);
+                    File f1 = new File(path, picNum + "-Xl" + ".jpg");
+                    SavingUtils.saveJPG(f1, image, context);
                 }
             });
             XposedHelpers.findAndHookMethod("com.snapchat.android.LandingPageActivity", lpparam.classLoader, "onActivityResult", int.class, int.class, XposedHelpers.findClass("android.content.Intent", lpparam.classLoader), new XC_MethodHook() {
@@ -371,7 +424,8 @@ public class HookMethods
                                         try {
                                             final Uri imageUri = data.getData();
                                             final InputStream imgStream = spContext.getContentResolver().openInputStream(imageUri);
-                                            final Bitmap chosenImg = Bitmap.createScaledBitmap(BitmapFactory.decodeStream(imgStream), dispWidth, dispHeight, false);
+//                                            final Bitmap chosenImg = Bitmap.createScaledBitmap(BitmapFactory.decodeStream(imgStream), dispWidth, dispHeight, false);
+                                            final Bitmap chosenImg = BitmapFactory.decodeStream(imgStream);
                                             HookedLayouts.profileImgBtns[0].setImageBitmap(chosenImg);
                                             HookedLayouts.profileImages[0] = chosenImg;
                                         } catch (FileNotFoundException e) {
@@ -387,7 +441,8 @@ public class HookMethods
                                         try {
                                             final Uri imageUri = data.getData();
                                             final InputStream imgStream = spContext.getContentResolver().openInputStream(imageUri);
-                                            final Bitmap chosenImg = Bitmap.createScaledBitmap(BitmapFactory.decodeStream(imgStream), dispWidth, dispHeight, false);
+//                                            final Bitmap chosenImg = Bitmap.createScaledBitmap(BitmapFactory.decodeStream(imgStream), dispWidth, dispHeight, false);
+                                            final Bitmap chosenImg = BitmapFactory.decodeStream(imgStream);
                                             HookedLayouts.profileImgBtns[1].setImageBitmap(chosenImg);
                                             HookedLayouts.profileImages[1] = chosenImg;
                                         } catch (FileNotFoundException e) {
@@ -403,7 +458,8 @@ public class HookMethods
                                         try {
                                             final Uri imageUri = data.getData();
                                             final InputStream imgStream = spContext.getContentResolver().openInputStream(imageUri);
-                                            final Bitmap chosenImg = Bitmap.createScaledBitmap(BitmapFactory.decodeStream(imgStream), dispWidth, dispHeight, false);
+//                                            final Bitmap chosenImg = Bitmap.createScaledBitmap(BitmapFactory.decodeStream(imgStream), dispWidth, dispHeight, false);
+                                            final Bitmap chosenImg = BitmapFactory.decodeStream(imgStream);
                                             HookedLayouts.profileImgBtns[2].setImageBitmap(chosenImg);
                                             HookedLayouts.profileImages[2] = chosenImg;
                                         } catch (FileNotFoundException e) {
@@ -419,7 +475,8 @@ public class HookMethods
                                         try {
                                             final Uri imageUri = data.getData();
                                             final InputStream imgStream = spContext.getContentResolver().openInputStream(imageUri);
-                                            final Bitmap chosenImg = Bitmap.createScaledBitmap(BitmapFactory.decodeStream(imgStream), dispWidth, dispHeight, false);
+//                                            final Bitmap chosenImg = Bitmap.createScaledBitmap(BitmapFactory.decodeStream(imgStream), dispWidth, dispHeight, false);
+                                            final Bitmap chosenImg = BitmapFactory.decodeStream(imgStream);
                                             HookedLayouts.profileImgBtns[3].setImageBitmap(chosenImg);
                                             HookedLayouts.profileImages[3] = chosenImg;
                                         } catch (FileNotFoundException e) {
@@ -435,7 +492,8 @@ public class HookMethods
                                         try {
                                             final Uri imageUri = data.getData();
                                             final InputStream imgStream = spContext.getContentResolver().openInputStream(imageUri);
-                                            final Bitmap chosenImg = Bitmap.createScaledBitmap(BitmapFactory.decodeStream(imgStream), dispWidth, dispHeight, false);
+//                                            final Bitmap chosenImg = Bitmap.createScaledBitmap(BitmapFactory.decodeStream(imgStream), dispWidth, dispHeight, false);
+                                            final Bitmap chosenImg = BitmapFactory.decodeStream(imgStream);
                                             HookedLayouts.profileImgBtns[4].setImageBitmap(chosenImg);
                                             HookedLayouts.profileImages[4] = chosenImg;
                                         } catch (FileNotFoundException e) {
@@ -449,6 +507,7 @@ public class HookMethods
 
                 }
             });
+
 
             findAndHookMethod("android.app.Application", lpparam.classLoader, "attach", Context.class, new XC_MethodHook() {
                 @Override
@@ -701,32 +760,7 @@ public class HookMethods
 //                            });
 
 
-//                            hookAllConstructors(findClass("aym", lpparam.classLoader), new XC_MethodHook() {
-//                                @Override
-//                                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-//                                    super.beforeHookedMethod(param);
-//                                    if(param.args.length == 4) {
-////                                        Bitmap bmpToInject = ((BitmapDrawable) HookedLayouts.profileImgBtns[(int) param.args[2]].getDrawable()).getBitmap();
-//                                        Logger.printTitle("aym public constructor called!", LogType.DEBUG);
-////                                        Logger.printMessage("Going to attempt to inject image " + bmpToInject, LogType.DEBUG);
-////                                        param.args[0] = bmpToInject;
-////                                        Logger.printMessage("Injected?", LogType.DEBUG);
-////                                        Logger.printFilledRow(LogType.DEBUG);
-//                                        Logger.printMessage("What I think to the the pic number: " + param.args[2], LogType.DEBUG);
-//                                        Bitmap bmpIn = (Bitmap) param.args[0];
-//                                        Logger.printMessage("Width x Height of Input BMP: " + bmpIn.getWidth() + " x " + bmpIn.getHeight(), LogType.DEBUG);
-//                                        Logger.printFilledRow(LogType.DEBUG);
-////                                        Logger.printFinalMessage("Going to attempt to save Bitmaps being passed!", LogType.DEBUG);
-////                                        File path = new File(SavingUtils.generateFilePath("TESTING", "TESTING"));
-////                                        path.mkdirs();
-////                                        File f1 = new File(path, param.args[2] + "-" + 1 + ".jpg");
-////                                        File f2 = new File(path, param.args[2] + "-" + 2 + ".jpg");
-////
-////                                        SavingUtils.saveJPG(f1, (Bitmap) param.args[0], context);
-////                                        SavingUtils.saveJPG(f2, (Bitmap) param.args[1], context);
-//                                    }
-//                                }
-//                            });
+
 
 //                                    });
 //                            XposedHelpers.findAndHookMethod("com.snapchat.android.fragments.addfriends.ProfileFragment$d", lpparam.classLoader, "a", XposedHelpers.findClass("android.graphics.Bitmap", lpparam.classLoader), XposedHelpers.findClass("com.snapchat.android.camera.TakePhotoCallback$TAKE_PHOTO_METHOD", lpparam.classLoader), new XC_MethodHook() {

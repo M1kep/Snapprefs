@@ -332,16 +332,16 @@ public class HookMethods
                             Logger.printMessage("Bitmap Object: " + imgToInject);
                             Logger.printMessage("Bitmap Height: " + injectHeight);
                             Logger.printMessage("Bitmap Width: " + injectWidth);
-                            if(injectWidth != inWidth || injectHeight != inHeight) {
-                                Logger.printMessage("Resizing imgToInject to " + inWidth + " x " + inHeight);
-                                imgToInject = Bitmap.createScaledBitmap(imgToInject, inWidth, inHeight, false);
-                            }
-                            Logger.printTitle("Bitmap To Inject Info");
-                            Logger.printMessage("Bitmap Object: " + imgToInject);
-                            Logger.printMessage("Bitmap Height: " + imgToInject.getHeight());
-                            Logger.printMessage("Bitmap Width: " + imgToInject.getWidth());
-                            Logger.printMessage("INJECTING!");
-                            param.args[0] = imgToInject;
+//                            if(injectWidth != inWidth || injectHeight != inHeight) {
+//                                Logger.printMessage("Resizing imgToInject to " + inWidth + " x " + inHeight);
+//                                imgToInject = Bitmap.createScaledBitmap(imgToInject, inWidth, inHeight, false);
+//                            }
+//                            Logger.printTitle("Bitmap To Inject Info");
+//                            Logger.printMessage("Bitmap Object: " + imgToInject);
+//                            Logger.printMessage("Bitmap Height: " + imgToInject.getHeight());
+//                            Logger.printMessage("Bitmap Width: " + imgToInject.getWidth());
+//                            Logger.printMessage("INJECTING!");
+//                            param.args[0] = imgToInject;
 //                            Bitmap imgToInject = HookedLayouts.profileImages[photoNum % 5];
 //                            Logger.log("photoNum Value: " + photoNum++);
 //                            Logger.log("Current Photo To Inject: " + imgToInject);

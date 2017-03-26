@@ -41,10 +41,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 
 public class Obfuscator implements Serializable {
-    public static int SUPPORTED_VERSION_CODE = 847;
-    public final static String SUPPORTED_VERSION_CODENAME = "9.39.5.0";
-    public final static String ROOTDETECTOR_CLASS = "aAY";//prev. ali
-    public final static String[] ROOTDETECTOR_METHODS= {"b", "c", "d", "e"};
+    public static int SUPPORTED_VERSION_CODE = 1059;
+    public final static String SUPPORTED_VERSION_CODENAME = "10.4.5.0";
+    public final static String ROOTDETECTOR_CLASS = "jjx";//prev. aAY(9.39.5), ali //updated 10x
+    public final static String[] ROOTDETECTOR_METHODS= {"b", "c", "d", "e"}; //updated 10x
     public final static String FRIENDS_BF= "l";//prev. j
 
     /**
@@ -60,14 +60,14 @@ public class Obfuscator implements Serializable {
     public static class save {
 
         //User class
-        public final static String USER_CLASS = "DP"; //prev. VU
+        public final static String USER_CLASS = "DP"; //prev. VU //not updated - not needed?
         //ReceivedSnap class
-        public final static String RECEIVEDSNAP_CLASS = "Sc"; //+ prev Vt
-        public final static String OBJECT_MID = "mId";
-        public final static String OBJECT_CACHEKEYSUFFIX = "mCacheKeyInstanceSuffix";
-        public final static String RECEIVEDSNAP_BEING_SEEN = "c"; // prev. d
+        public final static String RECEIVEDSNAP_CLASS = "Sc"; //+ prev Vt //not updated
+        public final static String OBJECT_MID = "mId";//not updated
+        public final static String OBJECT_CACHEKEYSUFFIX = "mCacheKeyInstanceSuffix";//not updated
+        public final static String RECEIVEDSNAP_BEING_SEEN = "c"; // prev. d//not updated
         // ReceivedSnap.getCanonicalDisplayTime()
-        public final static String RECEIVEDSNAP_DISPLAYTIME = "d";//prev. G
+        public final static String RECEIVEDSNAP_DISPLAYTIME = "d";//prev. G//not updated - not needed?
         //StorySnap class
         public final static String STORYSNAP_CLASS = "PO"; //+ prev VK
         //SnapView class
@@ -89,8 +89,8 @@ public class Obfuscator implements Serializable {
         //SnapView.hide(SnapViewEventAnalytics.EndReason)->(rm)
         public final static String SNAPVIEW_HIDE = "a";
         //SnapPreviewFragment class
-        public final static String SNAPPREVIEWFRAGMENT_CLASS = "com.snapchat.android.preview.SnapPreviewFragment";
-        public final static String SNAPPREVIEWFRAGMENT_METHOD1 = "a";//prev. l
+        public final static String SNAPPREVIEWFRAGMENT_CLASS = "com.snapchat.android.app.feature.preview.fragment.SnapPreviewFragment"; // prev com.snapchat.android.preview.SnapPreviewFragment
+        public final static String SNAPPREVIEWFRAGMENT_METHOD1 = "a";//prev. l // Stayed the same in 10.4.5.0 //updated 10x
         //ImageResourceView class
         public final static String IMAGERESOURCEVIEW_CLASS = "com.snapchat.android.ui.ImageResourceView";
         //imageResource instance variable name in ui.ImageResourceView
